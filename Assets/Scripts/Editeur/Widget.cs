@@ -4,7 +4,15 @@ using UnityEngine;
 
 public abstract class Widget {
 
+    public Widget parent = null;
+
+    public Rect area = new Rect(new Vector2(0, 0), new Vector2(0, 0));
+
     public virtual void OnDestroy() { }
+
+    public virtual void OnDraw() { }
+
+    public virtual void OnText() { }
 
     public virtual void OnUpdate() { }
 

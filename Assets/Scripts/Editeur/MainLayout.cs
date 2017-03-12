@@ -23,6 +23,10 @@ public class MainLayout : MonoBehaviour
         MainLayout.actual = this;
         widgets = new List<Widget>();
         mousePos = new Vector2();
+
+        this.AddWidget(new SelectorPanel());
+        this.AddWidget(new Box(new Rect(700, 300, 100, 100), "Primitive 2", true, null));
+        this.AddWidget(new Box(new Rect(500, 200, 100, 100), "Primitive 1", false, (Box)widgets[widgets.Count - 1]));
     }
 
     // Update is called once per frame
@@ -40,6 +44,43 @@ public class MainLayout : MonoBehaviour
     {
         obj.OnDestroy();
         widgets.Remove(obj);
+    }
+
+    static Material lineMaterial;
+    static void CreateLineMaterial()
+    {
+        if (!lineMaterial)
+        {
+            // Unity has a built-in shader that is useful for drawing
+            // simple colored things.
+            Shader shader = Shader.Find("Hidden/Internal-Colored");
+            lineMaterial = new Material(shader);
+            lineMaterial.hideFlags = HideFlags.HideAndDontSave;
+            // Turn on alpha blending
+            lineMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            lineMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            // Turn backface culling off
+            lineMaterial.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
+            // Turn off depth writes
+            lineMaterial.SetInt("_ZWrite", 0);
+        }
+    }
+
+    public void OnDraw()
+    {
+        CreateLineMaterial();
+        lineMaterial.SetPass(0);
+        GL.PushMatrix();
+        GL.LoadOrtho();
+        foreach (Widget o in widgets)
+        {
+            o.OnDraw();
+        }
+        GL.PopMatrix();
+        foreach (Widget o in widgets)
+        {
+            o.OnText();
+        }
     }
 
     public void OnUpdate()
@@ -113,6 +154,9 @@ public class MainLayout : MonoBehaviour
                 break;
             case EventType.KeyUp:
                 OnKeyEvent(e.keyCode, false);
+                break;
+            case EventType.Repaint:
+                OnDraw();
                 break;
         }
     }
