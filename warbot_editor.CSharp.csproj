@@ -78,6 +78,7 @@
     <Compile Include="Assets\Scripts\Editeur\MainLayout.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget\Box.cs" />
+    <Compile Include="Assets\Scripts\Editeur\Widget\Scrollbar.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget\SelectorPanel.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget\SelectorTeam.cs" />
   </ItemGroup>
