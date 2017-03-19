@@ -69,6 +69,7 @@ namespace WarBotEngine.Editeur
             this.AddWidget(new SelectorPanel());
             this.AddWidget(new Box(new Rect(700, 300, 100, 100), "Primitive 2", true, null));
             this.AddWidget(new Box(new Rect(500, 200, 100, 100), "Primitive 1", false, (Box)widgets[widgets.Count - 1]));
+            this.AddWidget(new Scrollbar(new Rect(700, 300, 50, 200), 500, null));
         }
 
         /// <summary>
@@ -188,6 +189,7 @@ namespace WarBotEngine.Editeur
             lineMaterial.SetPass(0);
             GL.PushMatrix();
             GL.LoadOrtho();
+            GL.MultMatrix(Matrix4x4.TRS(new Vector3(0, 1, 0), Quaternion.identity, new Vector3((float)1 / (float)Screen.width, (float)-1 / (float)Screen.height)));
             foreach (Widget o in widgets)
             {
                 o.OnDrawWithGL();
