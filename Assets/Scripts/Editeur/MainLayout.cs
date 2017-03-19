@@ -66,10 +66,10 @@ namespace WarBotEngine.Editeur
             widgets = new List<Widget>();
             mouse_position = new Vector2();
 
-            this.AddWidget(new SelectorPanel());
-            this.AddWidget(new Box(new Rect(700, 300, 100, 100), "Primitive 2", true, null));
-            this.AddWidget(new Box(new Rect(500, 200, 100, 100), "Primitive 1", false, (Box)widgets[widgets.Count - 1]));
-            this.AddWidget(new Scrollbar(new Rect(700, 300, 50, 200), 500, null));
+            Container cont = new Container(new Rect(20, 100, 400, 200));
+            cont.AllowScrollbar = true;
+            cont.AllowMotionScroll = true;
+            this.AddWidget(cont);
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace WarBotEngine.Editeur
         /// <param name="state">indique si la touche est appuyée ou non</param>
         public void OnKeyEvent(KeyCode keycode, bool state)
         {
-            print("[Key]: " + keycode + " = " + state);
+            //print("[Key]: " + keycode + " = " + state);
             foreach (Widget o in widgets)
             {
                 o.OnKeyEvent(keycode, state);
@@ -235,7 +235,7 @@ namespace WarBotEngine.Editeur
         /// <param name="y">coordonnée en y de la souris</param>
         public void OnMouseEvent(int button, bool pressed, int x, int y)
         {
-            print("[Mouse]: " + button + " = " + pressed + " -> " + x + " , " + y);
+            //print("[Mouse]: " + button + " = " + pressed + " -> " + x + " , " + y);
             foreach (Widget o in widgets)
             {
                 o.OnMouseEvent(button, pressed, x, y);
@@ -249,7 +249,7 @@ namespace WarBotEngine.Editeur
         /// <param name="y">coordonnée en y de la souris</param>
         public void OnMotionEvent(int x, int y)
         {
-            print("[Motion]: " + x + " , " + y);
+            //print("[Motion]: " + x + " , " + y);
             foreach (Widget o in widgets)
             {
                 o.OnMotionEvent(x, y);
@@ -262,7 +262,7 @@ namespace WarBotEngine.Editeur
         /// <param name="delta">valeur de scrolling</param>
         public void OnScrollEvent(int delta)
         {
-            print("[Scroll]: " + delta);
+            //print("[Scroll]: " + delta);
             foreach (Widget o in widgets)
             {
                 o.OnScrollEvent(delta);

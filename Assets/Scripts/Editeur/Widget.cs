@@ -49,9 +49,62 @@ namespace WarBotEngine.Editeur
         public Widget Parent { get { return parent; } set { parent = value; } }
 
         /// <summary>
-        /// Coordonnées et dimensions du widget
+        /// Coordonnées locales et dimensions du widget
         /// </summary>
-        public Rect Area { get { return area; } }
+        public Rect LocalArea { get { return area; } set { area = value; } }
+
+        /// <summary>
+        /// Coordonnées globales et dimensions du widget
+        /// </summary>
+        public Rect GlobalArea {
+            get
+            {
+                Vector2 pos = GlobalPosition;
+                return new Rect(pos.x, pos.y, area.width, area.height);
+            }
+            set
+            {
+                GlobalPosition = new Vector2(value.x, value.y);
+                area.width = value.width;
+                area.height = value.height;
+            }
+        }
+
+        /// <summary>
+        /// Coordonnées locales du widget
+        /// </summary>
+        public Vector2 LocalPosition
+        {
+            get
+            {
+                return new Vector2(area.x, area.y);
+            }
+            set
+            {
+                area.x = value.x;
+                area.y = value.y;
+            }
+        }
+
+        /// <summary>
+        /// Coordonnées globales du widget
+        /// </summary>
+        public Vector2 GlobalPosition
+        {
+            get
+            {
+                if (parent != null)
+                    return parent.GlobalPosition + new Vector2(area.x, area.y);
+                else
+                    return new Vector2(area.x, area.y);
+            }
+            set
+            {
+                Vector2 gpos = value - GlobalPosition;
+                area.x += gpos.x;
+                area.y += gpos.y;
+            }
+        }
 
         /// <summary>
         /// Widgets contenus dans le widget actuel
@@ -83,24 +136,52 @@ namespace WarBotEngine.Editeur
         /// <summary>
         /// Appelée lors du rendu de la scene avec les fonctions OpenGL
         /// </summary>
-        public virtual void OnDrawWithGL() { }
+        public virtual void OnDrawWithGL()
+        {
+            if (!this.Active) return;
+            foreach (Widget w in childs)
+            {
+                w.OnDrawWithGL();
+            }
+        }
 
         /// <summary>
         /// Appelée après le rendu de la scene avec les fonctions OpenGL
         /// </summary>
-        public virtual void OnDrawWithoutGL() { }
+        public virtual void OnDrawWithoutGL()
+        {
+            if (!this.Active) return;
+            foreach (Widget w in childs)
+            {
+                w.OnDrawWithoutGL();
+            }
+        }
 
         /// <summary>
         /// Appelée lors de la mise à jour des composants
         /// </summary>
-        public virtual void OnUpdate() { }
+        public virtual void OnUpdate()
+        {
+            if (!this.Active) return;
+            foreach (Widget w in childs)
+            {
+                w.OnUpdate();
+            }
+        }
 
         /// <summary>
         /// Appelée lors d'un évènement clavier
         /// </summary>
         /// <param name="keycode">touche associée à l'évènement</param>
         /// <param name="state">indique si la touche est appuyée ou non</param>
-        public virtual void OnKeyEvent(KeyCode keycode, bool state) { }
+        public virtual void OnKeyEvent(KeyCode keycode, bool state)
+        {
+            if (!this.Active) return;
+            foreach (Widget w in childs)
+            {
+                w.OnKeyEvent(keycode, state);
+            }
+        }
 
         /// <summary>
         /// Appelée lors d'un évènement souris de bouton
@@ -109,20 +190,41 @@ namespace WarBotEngine.Editeur
         /// <param name="pressed">indique si le bouton est appuyé ou non</param>
         /// <param name="x">coordonnée en x de la souris</param>
         /// <param name="y">coordonnée en y de la souris</param>
-        public virtual void OnMouseEvent(int button, bool pressed, int x, int y) { }
+        public virtual void OnMouseEvent(int button, bool pressed, int x, int y)
+        {
+            if (!this.Active) return;
+            foreach (Widget w in childs)
+            {
+                w.OnMouseEvent(button, pressed, x, y);
+            }
+        }
 
         /// <summary>
         /// Appelée lors d'un évènement souris de mouvement
         /// </summary>
         /// <param name="x">coordonnée en x de la souris</param>
         /// <param name="y">coordonnée en y de la souris</param>
-        public virtual void OnMotionEvent(int x, int y) { }
+        public virtual void OnMotionEvent(int x, int y)
+        {
+            if (!this.Active) return;
+            foreach (Widget w in childs)
+            {
+                w.OnMotionEvent(x, y);
+            }
+        }
 
         /// <summary>
         /// Appelée lors d'un évènement souris de scrolling
         /// </summary>
         /// <param name="delta">valeur de scrolling</param>
-        public virtual void OnScrollEvent(int delta) { }
+        public virtual void OnScrollEvent(int delta)
+        {
+            if (!this.Active) return;
+            foreach (Widget w in childs)
+            {
+                w.OnScrollEvent(delta);
+            }
+        }
 
 
         /*********************************
