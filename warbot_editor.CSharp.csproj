@@ -77,10 +77,9 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Editeur\MainLayout.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget.cs" />
-    <Compile Include="Assets\Scripts\Editeur\Widget\Box.cs" />
+    <Compile Include="Assets\Scripts\Editeur\Widget\Container.cs" />
+    <Compile Include="Assets\Scripts\Editeur\Widget\MotionScroll.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget\Scrollbar.cs" />
-    <Compile Include="Assets\Scripts\Editeur\Widget\SelectorPanel.cs" />
-    <Compile Include="Assets\Scripts\Editeur\Widget\SelectorTeam.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
