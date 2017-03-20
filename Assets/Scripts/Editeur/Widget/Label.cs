@@ -6,43 +6,56 @@ namespace WarBotEngine.Editeur
 {
 	public class Label : Widget {
 
-		protected string label;
+		private static readonly int DIM_PADDING = 5;
 
-		private static readonly int dim_padding = 5;
+        protected string text;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="WarBotEngine.Editeur.Label"/> class.
-		/// </summary>
-		/// <param name="r">Taille du label</param>
-		/// <param name="s">Le label a afficher</param>
-		public Label(Rect r, string s)
+        protected Color text_color = Color.black;
+
+        protected Color background_color = Color.clear;
+
+        public Color Color { get { return this.text_color; } set { this.text_color = value; } }
+
+        public Color Background { get { return this.background_color; } set { background_color = value; } }
+
+        /// <summary>
+        /// Constructeur de base du label
+        /// </summary>
+        /// <param name="r">Taille du label</param>
+        /// <param name="s">Le texte à afficher</param>
+        public Label(Rect r, string s)
 		{
 			this.area = r;			
-			this.label = s;
+			this.text = s;
 		}
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="WarBotEngine.Editeur.Label"/> class.
-		/// </summary>
-		/// <param name="r">Taille du label</param>
-		/// <param name="s">Label a afficher</param>
-		/// <param name="p">Parent du Label</param>
-		public Label(Rect r, string s, Widget p)
-		{
-			this.label = s;
-			this.parent = p;
-			this.area = r;
-		}
+        public override void OnDrawWithGL()
+        {
+            if (!this.active) return;
+            if (this.background_color != Color.clear)
+            {
+                GL.Begin(GL.QUADS);
+                GL.Color(this.background_color);
+                Rect rect = this.GlobalArea;
+                GL.Vertex3(rect.xMin, rect.yMin, 0);
+                GL.Vertex3(rect.xMax, rect.yMin, 0);
+                GL.Vertex3(rect.xMax, rect.yMax, 0);
+                GL.Vertex3(rect.xMin, rect.yMax, 0);
+                GL.End();
+            }
+        }
 
-		public override void OnDrawWithoutGL()
-		{
-			Rect rect = new Rect (this.area.xMin + dim_padding, 
-				this.area.yMin + dim_padding, 
-				this.area.width, 
-				this.area.height - dim_padding * 2);
+        public override void OnDrawWithoutGL()
+        {
+            if (!this.active) return;
+            Rect zone = this.GlobalArea;
+			Rect rect = new Rect (zone.xMin + DIM_PADDING,
+                zone.yMin + DIM_PADDING,
+                zone.width,
+                zone.height - DIM_PADDING * 2);
 			
-			GUI.color = Color.black;
-			GUI.Label (rect, label);
+			GUI.color = this.text_color;
+			GUI.Label (rect, text);
 		}
 
 	}

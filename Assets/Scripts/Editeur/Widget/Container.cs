@@ -8,9 +8,13 @@ namespace WarBotEngine.Editeur
     public class Container : Widget
     {
 
+        protected Color background_color = Color.clear;
+
         protected Scrollbar scrollbar;
 
         protected MotionScroll motionscroll;
+
+        public Color Background { get { return background_color; } set { background_color = value; } }
 
         public bool AllowScrollbar { get { return scrollbar.Active; } set { scrollbar.Active = value; } }
 
@@ -19,18 +23,13 @@ namespace WarBotEngine.Editeur
         public Container(Rect area)
         {
             this.area = area;
-            this.scrollbar = new Scrollbar(new Rect(area.width - Scrollbar.DIM_WIDTH, 0, Scrollbar.DIM_WIDTH, area.height), area.height * 3, OnScrollbarEvent, this);
+            this.scrollbar = new Scrollbar(new Rect(area.width - Scrollbar.DIM_WIDTH, 0, Scrollbar.DIM_WIDTH, area.height), area.height, OnScrollingEvent, this);
             this.scrollbar.Active = false;
-            this.motionscroll = new MotionScroll(area.width * 3, OnMotionScroll, this);
+            this.motionscroll = new MotionScroll(area.width, OnScrollingEvent, this);
             this.motionscroll.Active = false;
         }
 
-        protected void OnScrollbarEvent(object args)
-        {
-            
-        }
-
-        protected void OnMotionScroll(object args)
+        protected void OnScrollingEvent(Widget widget, object args)
         {
             
         }
@@ -38,6 +37,17 @@ namespace WarBotEngine.Editeur
         public override void OnDrawWithGL()
         {
             if (!this.Active) return;
+            if (this.background_color != Color.clear)
+            {
+                GL.Begin(GL.QUADS);
+                GL.Color(this.background_color);
+                Rect rect = this.GlobalArea;
+                GL.Vertex3(rect.xMin, rect.yMin, 0);
+                GL.Vertex3(rect.xMax, rect.yMin, 0);
+                GL.Vertex3(rect.xMax, rect.yMax, 0);
+                GL.Vertex3(rect.xMin, rect.yMax, 0);
+                GL.End();
+            }
             base.OnDrawWithGL();
             this.motionscroll.OnDrawWithGL();
             this.scrollbar.OnDrawWithGL();

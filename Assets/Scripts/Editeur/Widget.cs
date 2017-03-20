@@ -18,10 +18,76 @@ namespace WarBotEngine.Editeur
 
 
         /// <summary>
-        /// Delegate permettant de gérer les évènements des widgets
+        /// Delegate permettant de gérer les évènements simples des widgets
         /// </summary>
         /// <param name="args">paramètre quelconque de l'évènement</param>
-        public delegate void EventDelegate(object args);
+        public delegate void EventDelegate(Widget widget, object args);
+
+        /// <summary>
+        /// Delegate permettant de gérer les évènements de clic de souris sur des widgets
+        /// </summary>
+        /// <param name="widget">widget concerné par l'évènement</param>
+        /// <param name="button">bouton de la souris</param>
+        /// <param name="x">coordonnée en x du curseur</param>
+        /// <param name="y">coordonnée en y du curseur</param>
+        public delegate void EventMouseDelegate(Widget widget, int button, int x, int y);
+
+        /// <summary>
+        /// Delegate permettant de gérer les évènements de mouvement de souris sur des widgets
+        /// </summary>
+        /// <param name="widget">widget concerné par l'évènement</param>
+        /// <param name="x">coordonnée en x du curseur</param>
+        /// <param name="y">coordonnée en y du curseur</param>
+        public delegate void EventMotionDelegate(Widget widget, int x, int y);
+
+        /// <summary>
+        /// Delegate permettant de gérer les évènements de scrolling de souris sur des widgets
+        /// </summary>
+        /// <param name="widget">widget concerné par l'évènement</param>
+        /// <param name="delta">niveau de scrolling</param>
+        public delegate void EventScrollDelegate(Widget widget, int delta);
+
+        /// <summary>
+        /// Delegate permettant de gérer les évènements de changement de focus de widgets
+        /// </summary>
+        /// <param name="widget">widget concerné par l'évènement</param>
+        /// <param name="focus">indique si le widget a le focus ou non</param>
+        public delegate void EventFocusChangeDelegate(Widget widget, bool focus);
+
+        /// <summary>
+        /// Delegate permettant de gérer les évènements de pression de clavier lorsque des widgets on le focus
+        /// </summary>
+        /// <param name="widget">widget concerné par l'évènement</param>
+        /// <param name="button">touche du clavier</param>
+        public delegate void EventKeyDelegate(Widget widget, KeyCode key);
+
+        /// <summary>
+        /// Delegate permettant de gérer les évènements de mouvement curseur dans des widgets
+        /// </summary>
+        /// <param name="widget">widget concerné par l'évènement</param>
+        public delegate void EventEnterCursorDelegate(Widget widget);
+
+        /// <summary>
+        /// Delegate permettant de gérer les évènements de mouvement curseur hors des widgets
+        /// </summary>
+        /// <param name="widget">widget concerné par l'évènement</param>
+        public delegate void EventExitCursorDelegate(Widget widget);
+
+        /// <summary>
+        /// Delegate permettant de gérer les évènements de déplacement des widgets
+        /// </summary>
+        /// <param name="widget">widget concerné par l'évènement</param>
+        /// <param name="x">position en x du widget</param>
+        /// <param name="y">position en y widget</param>
+        public delegate void EventMoveDelegate(Widget widget, int x, int y);
+
+        /// <summary>
+        /// Delegate permettant de gérer les évènements de redimensionnement des widgets
+        /// </summary>
+        /// <param name="widget">widget concerné par l'évènement</param>
+        /// <param name="width">largeur du widget</param>
+        /// <param name="height">hauteur du widget</param>
+        public delegate void EventResizeDelegate(Widget widget, int width, int height);
 
 
         /***********************
@@ -29,13 +95,89 @@ namespace WarBotEngine.Editeur
          ***********************/
 
 
+        /// <summary>
+        /// Parent du widget
+        /// </summary>
         protected Widget parent = null;
 
+        /// <summary>
+        /// Zone locale du widget
+        /// </summary>
         protected Rect area = new Rect(new Vector2(0, 0), new Vector2(0, 0));
 
+        /// <summary>
+        /// Liste des widgets enfants
+        /// </summary>
         protected List<Widget> childs = new List<Widget>();
 
+        /// <summary>
+        /// Indique si le widget est actif
+        /// </summary>
         protected bool active = true;
+        
+        /// <summary>
+        /// Indique si le widget a le focus
+        /// </summary>
+        protected bool focus = false;
+
+
+        /******* ATTRIBUTS POUR GERER LES EVENEMENTS SPECIFIQUES ******/
+
+        /// <summary>
+        /// Indique la dernière position de la souris
+        /// </summary>
+        private Vector2 evnt_mouse_position = new Vector2(0xffffff, 0xffffff);
+
+
+        /************************************
+         ****** EVENEMENTS SPECIFIQUES ******
+         ************************************/
+
+
+        /// <summary>
+        /// Appelé lors d'un clic sur le widget
+        /// </summary>
+        public event EventMouseDelegate Clic = null;
+
+        /// <summary>
+        /// Appelé lorsque le curseur se déplace sur le widget
+        /// </summary>
+        public event EventMotionDelegate Motion = null;
+
+        /// <summary>
+        /// Appelé lors d'un scroll sur le widget
+        /// </summary>
+        public event EventScrollDelegate Scroll = null;
+
+        /// <summary>
+        /// Appelé lors de la pression d'une touche alors que le widget a le focus
+        /// </summary>
+        public event EventKeyDelegate KeyPress = null;
+
+        /// <summary>
+        /// Appelé lorsque le curseur entre dans le widget
+        /// </summary>
+        public event EventEnterCursorDelegate CursorEnter = null;
+
+        /// <summary>
+        /// Appelé lorsque le curseur sort du widget
+        /// </summary>
+        public event EventExitCursorDelegate CursorExit = null;
+
+        /// <summary>
+        /// Appelé lorsque le focus du widget change
+        /// </summary>
+        public event EventFocusChangeDelegate FocusChange = null;
+
+        /// <summary>
+        /// Appelé lorsque le widget est déplacé
+        /// </summary>
+        public event EventMoveDelegate Move = null;
+
+        /// <summary>
+        /// Appelé lorsque le widget est redimensionné
+        /// </summary>
+        public event EventResizeDelegate Resize = null;
 
 
         /************************
@@ -51,7 +193,22 @@ namespace WarBotEngine.Editeur
         /// <summary>
         /// Coordonnées locales et dimensions du widget
         /// </summary>
-        public Rect LocalArea { get { return area; } set { area = value; } }
+        public Rect LocalArea {
+            get
+            {
+                return area;
+            }
+            set
+            {
+                bool pos_change = (this.Move != null && (value.x != area.x || value.y != area.y));
+                bool size_change = (this.Resize != null && (value.width != area.width || value.height != area.height));
+                area = value;
+                if (pos_change)
+                    this.Move(this, (int)area.x, (int)area.y);
+                if (size_change)
+                    this.Resize(this, (int)area.width, (int)area.height);
+            }
+        }
 
         /// <summary>
         /// Coordonnées globales et dimensions du widget
@@ -64,9 +221,12 @@ namespace WarBotEngine.Editeur
             }
             set
             {
+                bool size_change = (this.Resize != null && (value.width != area.width || value.height != area.height));
                 GlobalPosition = new Vector2(value.x, value.y);
                 area.width = value.width;
                 area.height = value.height;
+                if (size_change)
+                    this.Resize(this, (int)area.width, (int)area.height);
             }
         }
 
@@ -81,8 +241,11 @@ namespace WarBotEngine.Editeur
             }
             set
             {
+                bool change = (this.Move != null && (area.x != value.x || area.y != value.y));
                 area.x = value.x;
                 area.y = value.y;
+                if (change)
+                    this.Move(this, (int)area.x, (int)area.y);
             }
         }
 
@@ -101,8 +264,11 @@ namespace WarBotEngine.Editeur
             set
             {
                 Vector2 gpos = value - GlobalPosition;
+                bool change = (this.Move != null && (gpos.x != 0 || gpos.y != 0));
                 area.x += gpos.x;
                 area.y += gpos.y;
+                if (change)
+                    this.Move(this, (int)area.x, (int)area.y);
             }
         }
 
@@ -115,6 +281,20 @@ namespace WarBotEngine.Editeur
         /// Détermine si le widget est actif ou non
         /// </summary>
         public bool Active { get { return active; } set { active = value; } }
+
+        public bool Focus {
+            get
+            {
+                return focus;
+            }
+            set
+            {
+                bool change = (focus != value);
+                focus = value;
+                if (change && FocusChange != null)
+                    FocusChange(this, focus);
+            }
+        }
 
 
         /***********************************
@@ -177,6 +357,9 @@ namespace WarBotEngine.Editeur
         public virtual void OnKeyEvent(KeyCode keycode, bool state)
         {
             if (!this.Active) return;
+            if (state && this.KeyPress != null && this.Focus)
+                this.KeyPress(this, keycode);
+
             foreach (Widget w in childs)
             {
                 w.OnKeyEvent(keycode, state);
@@ -193,6 +376,9 @@ namespace WarBotEngine.Editeur
         public virtual void OnMouseEvent(int button, bool pressed, int x, int y)
         {
             if (!this.Active) return;
+            if (pressed && this.Clic != null && this.GlobalArea.Contains(new Vector2(x, y)))
+                this.Clic(this, button, x, y);
+
             foreach (Widget w in childs)
             {
                 w.OnMouseEvent(button, pressed, x, y);
@@ -207,6 +393,21 @@ namespace WarBotEngine.Editeur
         public virtual void OnMotionEvent(int x, int y)
         {
             if (!this.Active) return;
+            Rect zone = this.GlobalArea;
+            if (zone.Contains(new Vector2(x, y)))
+            {
+                if (this.CursorEnter != null && !zone.Contains(this.evnt_mouse_position))
+                    this.CursorEnter(this);
+                if (this.Motion != null)
+                    this.Motion(this, x, y);
+            }
+            else
+            {
+                if (this.CursorExit != null && zone.Contains(this.evnt_mouse_position))
+                    this.CursorExit(this);
+            }
+            this.evnt_mouse_position = new Vector2(x, y);
+
             foreach (Widget w in childs)
             {
                 w.OnMotionEvent(x, y);
@@ -220,6 +421,9 @@ namespace WarBotEngine.Editeur
         public virtual void OnScrollEvent(int delta)
         {
             if (!this.Active) return;
+            if (this.Scroll != null && this.GlobalArea.Contains(this.evnt_mouse_position))
+                this.Scroll(this, delta);
+
             foreach (Widget w in childs)
             {
                 w.OnScrollEvent(delta);

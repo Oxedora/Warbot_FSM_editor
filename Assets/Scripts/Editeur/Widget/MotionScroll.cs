@@ -21,7 +21,7 @@ namespace WarBotEngine.Editeur
         private static readonly float SCROLL_MOTION_SPEED = 3.0f;
         private static readonly float SCROLL_MOUSE_SPEED = 3.0f;
 
-        private static readonly float MOTION_MAX_SPEED = 2f;
+        private static readonly float MOTION_MAX_SPEED = 1f;
 
 
         /***********************
@@ -50,7 +50,20 @@ namespace WarBotEngine.Editeur
         /// <summary>
         /// Hauteur totale du conteneur
         /// </summary>
-        public float ScrollWidth { get { return scroll_width; } set { scroll_width = value; } }
+        public float ScrollWidth {
+            get
+            {
+                return scroll_width;
+            }
+            set
+            {
+                scroll_width = value;
+                if (actual_value > scroll_width - this.area.width)
+                    actual_value = scroll_width - this.area.width;
+                if (actual_value < 0)
+                    actual_value = 0;
+            }
+        }
 
         /// <summary>
         /// Position verticale actuelle
@@ -70,7 +83,7 @@ namespace WarBotEngine.Editeur
                 if (actual_value < 0)
                     actual_value = 0;
                 if (current != actual_value && on_changevalue != null)
-                    on_changevalue(actual_value);
+                    on_changevalue(this, actual_value);
             }
         }
 
@@ -145,7 +158,7 @@ namespace WarBotEngine.Editeur
                 {
                     if ((this.last_mouse_pos - mouse_pos).sqrMagnitude * Time.deltaTime <= MotionScroll.MOTION_MAX_SPEED)
                     {
-                        this.CurrentValue -= MotionScroll.SCROLL_MOTION_SPEED;
+                        this.CurrentValue -= MotionScroll.SCROLL_MOTION_SPEED * Time.deltaTime;
                         this.is_scrolling = true;
                     }
                 }
@@ -153,7 +166,7 @@ namespace WarBotEngine.Editeur
                 {
                     if ((this.last_mouse_pos - mouse_pos).sqrMagnitude * Time.deltaTime <= MotionScroll.MOTION_MAX_SPEED)
                     {
-                        this.CurrentValue += MotionScroll.SCROLL_MOTION_SPEED;
+                        this.CurrentValue += MotionScroll.SCROLL_MOTION_SPEED * Time.deltaTime;
                         this.is_scrolling = true;
                     }
                 }
