@@ -66,10 +66,9 @@ namespace WarBotEngine.Editeur
             widgets = new List<Widget>();
             mouse_position = new Vector2();
 
-            Container cont = new Container(new Rect(20, 100, 400, 200));
-            cont.AllowScrollbar = true;
-            cont.AllowMotionScroll = true;
-            this.AddWidget(cont);
+            this.AddWidget(new BehaviorEditor());
+            this.AddWidget(new PrimitivesCollection());
+            this.AddWidget(new TeamSelection());
         }
 
         /// <summary>
@@ -187,16 +186,13 @@ namespace WarBotEngine.Editeur
         {
             CreateLineMaterial();
             lineMaterial.SetPass(0);
-            GL.PushMatrix();
-            GL.LoadOrtho();
-            GL.MultMatrix(Matrix4x4.TRS(new Vector3(0, 1, 0), Quaternion.identity, new Vector3((float)1 / (float)Screen.width, (float)-1 / (float)Screen.height)));
             foreach (Widget o in widgets)
             {
+                GL.PushMatrix();
+                GL.LoadOrtho();
+                GL.MultMatrix(Matrix4x4.TRS(new Vector3(0, 1, 0), Quaternion.identity, new Vector3((float)1 / (float)Screen.width, (float)-1 / (float)Screen.height)));
                 o.OnDrawWithGL();
-            }
-            GL.PopMatrix();
-            foreach (Widget o in widgets)
-            {
+                GL.PopMatrix();
                 o.OnDrawWithoutGL();
             }
         }

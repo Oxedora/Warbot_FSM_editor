@@ -56,7 +56,7 @@ namespace WarBotEngine.Editeur
 		/// <param name="sel">Selector a copier.</param>
 		public Selector(Selector sel)
 		{
-			this.area = sel.Area;
+			this.area = sel.GlobalArea;
 			this.options = sel.options;
 		}
 

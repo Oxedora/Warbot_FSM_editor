@@ -59,7 +59,20 @@ namespace WarBotEngine.Editeur
         /// <summary>
         /// Hauteur totale du conteneur
         /// </summary>
-        public float ScrollHeight { get { return scroll_height; } set { scroll_height = value; } }
+        public float ScrollHeight {
+            get
+            {
+                return scroll_height;
+            }
+            set
+            {
+                scroll_height = value;
+                if (actual_value > scroll_height - this.area.height)
+                    actual_value = scroll_height - this.area.height;
+                if (actual_value < 0)
+                    actual_value = 0;
+            }
+        }
 
         /// <summary>
         /// Position verticale actuelle
@@ -79,7 +92,7 @@ namespace WarBotEngine.Editeur
                 if (actual_value < 0)
                     actual_value = 0;
                 if (current != actual_value && on_changevalue != null)
-                    on_changevalue(actual_value);
+                    on_changevalue(this, actual_value);
             }
         }
 
@@ -208,6 +221,18 @@ namespace WarBotEngine.Editeur
                             this.clic_position = new Vector2(x, y);
                             this.clic_value = this.actual_value;
                         }
+                    }
+                    zone.height = zone.width;
+                    if (zone.Contains(new Vector2(x, y)))
+                    {
+                        this.CurrentValue -= Scrollbar.SCROLL_SPEED;
+                    }
+                    zone = this.GlobalArea;
+                    zone.y = zone.yMax - zone.width;
+                    zone.height = zone.width;
+                    if (zone.Contains(new Vector2(x, y)))
+                    {
+                        this.CurrentValue += Scrollbar.SCROLL_SPEED;
                     }
                 }
                 else
