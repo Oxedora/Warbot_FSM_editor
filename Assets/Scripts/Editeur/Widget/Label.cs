@@ -4,19 +4,79 @@ using UnityEngine;
 
 namespace WarBotEngine.Editeur
 {
-	public class Label : Widget {
 
-		private static readonly int DIM_PADDING = 5;
+    /// <summary>
+    /// Texte affichable
+    /// </summary>
+	public class Label : Widget
+    {
+
+
+        /***********************
+         ****** ATTRIBUTS ******
+         ***********************/
+
 
         protected string text;
+
+        protected int text_size = 14;
+
+        protected FontStyle text_style = FontStyle.Normal;
+
+        protected TextAnchor text_align = TextAnchor.MiddleCenter;
 
         protected Color text_color = Color.black;
 
         protected Color background_color = Color.clear;
 
+        protected int margin = 0;
+
+
+        /************************
+         ****** ACCESSEURS ******
+         ************************/
+
+
+        /// <summary>
+        /// Contenu du label
+        /// </summary>
+        public string Text { get { return this.text; } set { this.text = value; } }
+
+        /// <summary>
+        /// Hauteur du texte
+        /// </summary>
+        public int TextSize { get { return this.text_size; } set { this.text_size = value; } }
+
+        /// <summary>
+        /// Style du texte
+        /// </summary>
+        public FontStyle TextStyle { get { return this.text_style; } set { this.text_style = value; } }
+
+        /// <summary>
+        /// Alignement du texte
+        /// </summary>
+        public TextAnchor TextAlign { get { return this.text_align; } set { this.text_align = value; } }
+
+        /// <summary>
+        /// Couleur du texte
+        /// </summary>
         public Color Color { get { return this.text_color; } set { this.text_color = value; } }
 
+        /// <summary>
+        /// Couleur du font
+        /// </summary>
         public Color Background { get { return this.background_color; } set { background_color = value; } }
+
+        /// <summary>
+        /// Taille de la marge horizontale
+        /// </summary>
+        public int Margin { get { return this.margin; } set { this.margin = value; } }
+
+
+        /********************************************
+         ****** METHODES SPECIFIQUES AU WIDGET ******
+         ********************************************/
+
 
         /// <summary>
         /// Constructeur de base du label
@@ -28,6 +88,12 @@ namespace WarBotEngine.Editeur
 			this.area = r;			
 			this.text = s;
 		}
+
+
+        /***********************************
+         ****** METHODES D'EVENEMENTS ******
+         ***********************************/
+
 
         public override void OnDrawWithGL()
         {
@@ -49,14 +115,17 @@ namespace WarBotEngine.Editeur
         {
             if (!this.active) return;
             Rect zone = this.GlobalArea;
-			Rect rect = new Rect (zone.xMin + DIM_PADDING,
-                zone.yMin + DIM_PADDING,
-                zone.width,
-                zone.height - DIM_PADDING * 2);
-			
+            zone.x += this.margin;
+            zone.width -= 2 * this.margin;
 			GUI.color = this.text_color;
-			GUI.Label (rect, text);
+
+            GUIStyle style = GUI.skin.GetStyle("label");
+            style.alignment = this.text_align;
+            style.fontSize = this.text_size;
+            style.fontStyle = this.text_style;
+            GUI.Label(zone, text);
 		}
 
 	}
+
 }
