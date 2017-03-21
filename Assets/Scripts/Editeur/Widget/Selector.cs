@@ -7,193 +7,165 @@ using System.IO;
 namespace WarBotEngine.Editeur
 {
 	/// <summary>
-	/// Class qui implementerait un drop down pour visualiser la sélection d'équipes
-	/// et des unités.
+	/// Drop-down
 	/// </summary>
-	public class Selector : Widget {
+	public class Selector : Widget
+    {
 
-		protected List<Label> options = new List<Label>();
+        private static readonly int DIM_PADDING = 2;
+        private static readonly int DIM_ELEMENT_HEIGHT = 22;
+        private static readonly int DIM_ELEMENT_MARGIN = 15;
+        private static readonly float DIM_TRIANGLE_SIZE = 0.6f;
 
-		protected int selected_option = -1;
-		protected bool dropped = false;
+        private static readonly Color COLOR_1 = new Color((float)0x45 / 255, (float)0x3c / 255, (float)0x38 / 255); //453c38
+        private static readonly Color COLOR_2 = new Color((float)0x6a / 255, (float)0x5c / 255, (float)0x55 / 255); //6a5c55
+        private static readonly Color COLOR_3 = new Color((float)0xf6 / 255, (float)0x6e / 255, (float)0x00 / 255); //f66e00
+        private static readonly Color COLOR_CONTAINER_COLOR = new Color((float)0xeb / 255, (float)0xe9 / 255, (float)0xf6 / 255); //ebe9f6
 
-		private static readonly float dim_scale_width_p = 0.25f;
+        private int selection = -1;
 
-		private static readonly int dim_margin_top = 20;
-		private static readonly int dim_padding = 5;
+        private Container container;
 
-		private static readonly float dim_scale_width = 0.8f;
-		private static readonly int dim_pixel_height = 30;
+        private int max_height;
 
-		private static readonly int dim_triangle_size = 20;
+        private Label main_label;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="WarBotEngine.Editeur.Selector"/> class.
-		/// </summary>
-		/// <param name="opt">La liste des options que proposera le selector</param>
-		public Selector(List<string> opt)
-		{
-			Rect zone = new Rect(0, 0, Screen.width * dim_scale_width_p, Screen.height);
-			float width = zone.width * dim_scale_width;
-			this.area = new Rect((zone.width - width) / 2, dim_margin_top, width, dim_pixel_height);
+        public string[] Elements
+        {
+            get
+            {
+                int size = this.childs[0].Childs.Length;
+                string[] res = new string[size];
+                for (int i = 0; i < size; i++)
+                {
+                    res[i] = ((Label)this.childs[0].Childs[i]).Text;
+                }
+                return res;
+            }
+            set
+            {
+                this.childs[0].RemoveAllChilds();
+                for (int i = 0; i < value.Length; i++)
+                {
+                    Label label = new Label(new Rect(0, i * DIM_ELEMENT_HEIGHT, this.area.width - Scrollbar.DIM_WIDTH, DIM_ELEMENT_HEIGHT), value[i]);
+                    label.TextAlign = TextAnchor.MiddleLeft;
+                    label.Clic += OnSelect;
+                    label.Margin = DIM_ELEMENT_MARGIN;
+                    this.childs[0].AddChild(label);
+                }
+                if (value.Length == 0) this.container.LocalArea = new Rect(0, this.area.height, this.area.width, DIM_ELEMENT_HEIGHT);
+                else if (value.Length * DIM_ELEMENT_HEIGHT > this.max_height) this.container.LocalArea = new Rect(0, this.area.height, this.area.width, this.max_height);
+                else this.container.LocalArea = new Rect(0, this.area.height, this.area.width, value.Length * DIM_ELEMENT_HEIGHT);
 
-			int i = 0;
-			foreach (string o in opt) 
-			{
-				options.Add(new Label(new Rect(this.area.xMin,
-					this.area.yMin + i * dim_pixel_height,
-					this.area.width,
-					dim_pixel_height),
-					o));
-				i++;
-			}
-		}
+                if (value.Length == 0) this.selection = -1;
+                else this.selection = 0;
+                this.main_label.Text = this.Selection;
+            }
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="WarBotEngine.Editeur.Selector"/> class.
-		/// Constructeur par copie
-		/// </summary>
-		/// <param name="sel">Selector a copier.</param>
-		public Selector(Selector sel)
-		{
-			this.area = sel.GlobalArea;
-			this.options = sel.options;
-		}
+        public string Selection
+        {
+            get
+            {
+                if (this.selection == -1)
+                    return "";
+                else
+                    return this.Elements[this.selection];
+            }
+            set
+            {
+                int size = this.childs[0].Childs.Length;
+                for (int i = 0; i < size; i++)
+                {
+                    if (((Label)this.childs[0].Childs[i]).Text == value)
+                    {
+                        this.selection = i;
+                        this.main_label.Text = this.Selection;
+                        return;
+                    }
+                }
+                this.selection = -1;
+                this.main_label.Text = "";
+            }
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="WarBotEngine.Editeur.Selector"/> class.
-		/// </summary>
-		public Selector()
-		{
-			Rect zone = new Rect(0, 0, Screen.width * dim_scale_width_p, Screen.height);
-			float width = zone.width * dim_scale_width;
-			this.area = new Rect((zone.width - width) / 2, dim_margin_top, width, dim_pixel_height);
-		}
+		public Selector(Rect area, int height)
+        {
+            this.area = area;
+            this.max_height = height;
+            this.container = new Container(new Rect(0, this.area.height, this.area.width, DIM_ELEMENT_HEIGHT));
+            this.AddChild(container);
 
-		public Selector(string path)
-		{
-			Rect zone = new Rect(0, 0, Screen.width * dim_scale_width_p, Screen.height);
-			float width = zone.width * dim_scale_width;
-			this.area = new Rect((zone.width - width) / 2, dim_margin_top, width, dim_pixel_height);
+            this.container.Parent = this;
+            this.container.AllowScrollbar = true;
+            this.container.Background = COLOR_CONTAINER_COLOR;
 
-			string pattern = @"(^(.*)\\)|(.meta)"; // @".." ne tient pas compte des séquences d'échappement
+            this.main_label = new Label(new Rect(DIM_PADDING, DIM_PADDING, this.area.width - this.area.height - DIM_PADDING, this.area.height - 2 * DIM_PADDING), "");
+            this.main_label.Parent = this;
+            this.main_label.Color = COLOR_3;
+            this.main_label.Background = COLOR_2;
+            this.main_label.Margin = DIM_ELEMENT_MARGIN;
+            this.main_label.TextStyle = FontStyle.Bold;
+            this.main_label.TextAlign = TextAnchor.MiddleLeft;
 
-			int i = 0;
-			foreach (string file in Directory.GetFiles(path)) // Pour chacun des fichiers du chemin spécifié
-			{ 
-				string teamName = Regex.Replace(file, pattern, string.Empty); // Récupère seulement le nom de l'équipe dans le chemin donné
+            this.container.Active = false;
+        }
 
-				options.Add(new Label(new Rect(this.area.xMin,
-					this.area.yMin + i * dim_pixel_height,
-					this.area.width,
-					dim_pixel_height),
-					teamName)); // ajoute le nom de l'équipe au menu défilant
-				i++;
-			}
-		}
+        public void OnSelect(Widget widget, int button, int x, int y)
+        {
+            this.Selection = ((Label)widget).Text;
+            this.container.Active = false;
+        }
 
-		/// <summary>
-		/// Options proposées par le selector
-		/// </summary>
-		public Label[] Options { get { return options.ToArray(); } }
+        public override void OnDrawWithGL()
+        {
+            base.OnDrawWithGL();
+            GL.Begin(GL.QUADS);
+            GL.Color(COLOR_1);
+            Rect rect = this.GlobalArea;
+            GL.Vertex3(rect.xMin, rect.yMin, 0);
+            GL.Vertex3(rect.xMax, rect.yMin, 0);
+            GL.Vertex3(rect.xMax, rect.yMax, 0);
+            GL.Vertex3(rect.xMin, rect.yMax, 0);
+            GL.End();
+            this.main_label.OnDrawWithGL();
 
-		public Label SelectedOption()
-		{
-			Label defaut = (new Label(new Rect(this.area.xMin,
-				this.area.yMin,
-				this.area.width,
-				dim_pixel_height),
-				"Aucune équipe sélectionnée"));
-			return (selected_option != -1 ? options [selected_option] : defaut);
-		}
+            rect.x += rect.width - rect.height;
+            rect.width = DIM_TRIANGLE_SIZE * rect.height;
+            rect.height = 0.7f * rect.width;
+            rect.x += (this.area.height - rect.width) / 2;
+            rect.y += (this.area.height - rect.height) / 2;
+            GL.Begin(GL.TRIANGLES);
+            GL.Color(COLOR_2);
+            if (this.container.Active)
+            {
+                //Flèche "bas"
+                GL.Vertex3(rect.xMin, rect.yMin, 0);
+                GL.Vertex3((rect.xMin + rect.xMax) / 2, rect.yMax, 0);
+                GL.Vertex3(rect.xMax, rect.yMin, 0);
+            }
+            else
+            {
+                //Flèche "haut"
+                GL.Vertex3(rect.xMin, rect.yMax, 0);
+                GL.Vertex3((rect.xMin + rect.xMax) / 2, rect.yMin, 0);
+                GL.Vertex3(rect.xMax, rect.yMax, 0);
+            }
+            GL.End();
+        }
 
-		public override void OnDrawWithGL()
-		{
-			if (!dropped) {
-				// Traçage du rectangle de fond
-				float left = (float)this.area.x, 
-				right = (float)this.area.xMax, 
-				bottom = (float)(this.area.yMin), 
-				top = (float)(this.area.yMax);
-				GL.Begin (GL.QUADS);
-				GL.Color (Color.white);
-				GL.Vertex3 (left, top, 0);
-				GL.Vertex3 (right, top, 0);
-				GL.Vertex3 (right, bottom, 0);
-				GL.Vertex3 (left, bottom, 0);
-				GL.End ();
+        public override void OnDrawWithoutGL()
+        {
+            base.OnDrawWithoutGL();
+            this.main_label.OnDrawWithoutGL();
+        }
 
-				//Traçage du triangle cliquable
-				left = (float)(this.area.xMax - dim_padding - dim_triangle_size);
-				right = (float)(this.area.xMax - dim_padding);
-				bottom = (float)(this.area.yMin + dim_padding);
-				top = (float)(this.area.yMin + dim_padding + dim_triangle_size);
-				GL.Begin (GL.TRIANGLES);
-				GL.Color (Color.black);
-				GL.Vertex3 (left, bottom, 0);
-				GL.Vertex3 ((left + right) / 2, top, 0);
-				GL.Vertex3 (right, bottom, 0);
-				GL.End ();
-			} 
-			else 
-			{
-				// Traçage du rectangle de fond
-				float left = (float)this.area.x, 
-				right = (float)this.area.xMax, 
-				bottom = (float)(this.area.yMin), 
-				top = (float)(this.area.yMax + this.area.height * (options.Count - 1));
-				GL.Begin (GL.QUADS);
-				GL.Color (Color.white);
-				GL.Vertex3 (left, top, 0);
-				GL.Vertex3 (right, top, 0);
-				GL.Vertex3 (right, bottom, 0);
-				GL.Vertex3 (left, bottom, 0);
-				GL.End ();
+        public override void OnMouseEvent(int button, bool pressed, int x, int y)
+        {
+            base.OnMouseEvent(button, pressed, x, y);
+            if (pressed && this.GlobalArea.Contains(new Vector2(x, y)))
+                this.childs[0].Active = !this.childs[0].Active;
+        }
 
-				//Traçage du triangle cliquable
-				left = (float)(this.area.xMax - dim_padding - dim_triangle_size);
-				right = (float)(this.area.xMax - dim_padding);
-				bottom = (float)(this.area.yMin + dim_padding);
-				top = (float)(this.area.yMin + dim_padding + dim_triangle_size);
-				GL.Begin (GL.TRIANGLES);
-				GL.Color (Color.black);
-				GL.Vertex3 (left, top, 0);
-				GL.Vertex3 ((left + right) / 2, bottom, 0);
-				GL.Vertex3 (right, top, 0);
-				GL.End ();
-				
-			}
-		}
-
-		public override void OnDrawWithoutGL()
-		{
-			if (!dropped) {
-				SelectedOption().OnDrawWithoutGL();
-			} 
-			else 
-			{
-				for (int i = 0; i < options.Count; i++) 
-				{
-					options[i].OnDrawWithoutGL();
-				}
-			}
-		}
-
-		public override void OnMouseEvent(int button, bool pressed, int x, int y)
-		{
-			if (pressed && button == 0) 
-			{
-				Vector2 cursor = new Vector2 (x, y);
-				Rect triangle = new Rect (this.area.xMax - dim_padding - dim_triangle_size,
-					                this.area.yMin + dim_padding,
-					                dim_triangle_size,
-					                dim_triangle_size);
-
-				// Si on a cliqué sur le triangle on déploie ou remballe
-				if (triangle.Contains (cursor)) {
-					dropped = !dropped;	
-				}
-			}
-		}
-	}
+    }
 }

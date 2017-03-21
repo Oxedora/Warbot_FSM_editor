@@ -90,10 +90,26 @@ namespace WarBotEngine.Editeur
         public delegate void EventResizeDelegate(Widget widget, int width, int height);
 
 
+        /*********************************
+         ****** ATTRIBUTS STATIQUES ******
+         *********************************/
+
+
+        /// <summary>
+        /// Incrémenteur des identifiants de widgets
+        /// </summary>
+        private static uint _id_increment = 0;
+
+
         /***********************
          ****** ATTRIBUTS ******
          ***********************/
 
+
+        /// <summary>
+        /// Identifiant du widget
+        /// </summary>
+        protected uint id = Widget._id_increment++;
 
         /// <summary>
         /// Parent du widget
@@ -184,6 +200,11 @@ namespace WarBotEngine.Editeur
          ****** ACCESSEURS ******
          ************************/
 
+
+        /// <summary>
+        /// Identifiant du widget
+        /// </summary>
+        public uint ID { get { return this.id; } }
 
         /// <summary>
         /// Parent du widget s'il en a un et null sinon
@@ -376,8 +397,19 @@ namespace WarBotEngine.Editeur
         public virtual void OnMouseEvent(int button, bool pressed, int x, int y)
         {
             if (!this.Active) return;
-            if (pressed && this.Clic != null && this.GlobalArea.Contains(new Vector2(x, y)))
-                this.Clic(this, button, x, y);
+            if (pressed)
+            {
+                if (this.GlobalArea.Contains(new Vector2(x, y)))
+                {
+                    if (this.Clic != null)
+                        this.Clic(this, button, x, y);
+                    this.Focus = true;
+                }
+                else
+                {
+                    this.Focus = false;
+                }
+            }
 
             foreach (Widget w in childs)
             {

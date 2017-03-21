@@ -116,7 +116,7 @@ namespace WarBotEngine.Editeur
 
         public override void OnDrawWithGL()
         {
-            if (!this.active) return;
+            if (!this.active || this.area.width >= this.scroll_width) return;
 
             GL.Begin(GL.QUADS);
 

@@ -126,7 +126,7 @@ namespace WarBotEngine.Editeur
         public override void OnDrawWithGL()
         {
             //Si le widget n'est pas actif, on ne l'affiche pas
-            if (!this.active) return;
+            if (!this.active || this.area.height >= this.scroll_height) return;
 
             Vector2 pos = this.GlobalPosition;
             Rect rect = new Rect(pos.x, pos.y, this.area.width, this.area.height);
