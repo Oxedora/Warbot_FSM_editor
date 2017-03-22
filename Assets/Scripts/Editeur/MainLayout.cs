@@ -27,6 +27,8 @@ namespace WarBotEngine.Editeur
 
         private static Material lineMaterial;
 
+        private DragAndDrop drag_and_drop;
+
 
         /****************************
          ****** OBJETS D'UNITY ******
@@ -69,6 +71,9 @@ namespace WarBotEngine.Editeur
             this.AddWidget(new BehaviorEditor());
             this.AddWidget(new PrimitivesCollection());
             this.AddWidget(new TeamSelection());
+
+            this.drag_and_drop = new DragAndDrop((PrimitivesCollection)this.widgets[1], (BehaviorEditor)this.widgets[0]);
+            this.AddWidget(this.drag_and_drop);
         }
 
         /// <summary>
@@ -114,6 +119,31 @@ namespace WarBotEngine.Editeur
                     OnDraw();
                     break;
             }
+        }
+
+
+        /*********************************
+         ****** METHODES DE GESTION ******
+         *********************************/
+        
+
+        /// <summary>
+        /// Ajoute les matrices d'OpenGL
+        /// </summary>
+        public void PushGL()
+        {
+            lineMaterial.SetPass(0);
+            GL.PushMatrix();
+            GL.LoadOrtho();
+            GL.MultMatrix(Matrix4x4.TRS(new Vector3(0, 1, 0), Quaternion.identity, new Vector3((float)1 / (float)Screen.width, (float)-1 / (float)Screen.height)));
+        }
+
+        /// <summary>
+        /// Retire les matrices d'OpenGL
+        /// </summary>
+        public void PopGL()
+        {
+            GL.PopMatrix();
         }
 
 
@@ -186,15 +216,12 @@ namespace WarBotEngine.Editeur
         {
             CreateLineMaterial();
             lineMaterial.SetPass(0);
+            this.PushGL();
             foreach (Widget o in widgets)
             {
-                GL.PushMatrix();
-                GL.LoadOrtho();
-                GL.MultMatrix(Matrix4x4.TRS(new Vector3(0, 1, 0), Quaternion.identity, new Vector3((float)1 / (float)Screen.width, (float)-1 / (float)Screen.height)));
-                o.OnDrawWithGL();
-                GL.PopMatrix();
-                o.OnDrawWithoutGL();
+                o.OnDraw();
             }
+            this.PopGL();
         }
 
         /// <summary>

@@ -68,9 +68,9 @@ namespace WarBotEngine.Editeur
             {
                 scroll_height = value;
                 if (actual_value > scroll_height - this.area.height)
-                    actual_value = scroll_height - this.area.height;
+                    CurrentValue = scroll_height - this.area.height;
                 if (actual_value < 0)
-                    actual_value = 0;
+                    CurrentValue = 0;
             }
         }
 

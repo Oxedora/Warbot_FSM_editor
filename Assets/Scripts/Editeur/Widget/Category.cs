@@ -1,16 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Text.RegularExpressions;
-using System.IO;
 
 namespace WarBotEngine.Editeur
 {
 
-	/// <summary>
-	/// Drop-down
-	/// </summary>
-	public class Selector : Widget
+    /// <summary>
+    /// Sélecteur sous forme de catégories
+    /// </summary>
+    public class Category : Widget
     {
 
 
@@ -19,15 +17,14 @@ namespace WarBotEngine.Editeur
          *********************************/
 
 
-        private static readonly int DIM_PADDING = 2;
-        private static readonly int DIM_ELEMENT_HEIGHT = 22;
-        private static readonly int DIM_ELEMENT_MARGIN = 15;
-        private static readonly float DIM_TRIANGLE_SIZE = 0.6f;
+        public static readonly int DIM_ELEMENT_HEIGHT = 22;
 
-        private static readonly Color COLOR_1 = new Color((float)0x45 / 255, (float)0x3c / 255, (float)0x38 / 255); //453c38
-        private static readonly Color COLOR_2 = new Color((float)0x6a / 255, (float)0x5c / 255, (float)0x55 / 255); //6a5c55
-        private static readonly Color COLOR_3 = new Color((float)0xf6 / 255, (float)0x6e / 255, (float)0x00 / 255); //f66e00
-        private static readonly Color COLOR_CONTAINER_COLOR = new Color((float)0xeb / 255, (float)0xe9 / 255, (float)0xf6 / 255); //ebe9f6
+        private static readonly int DIM_MARGIN = 20;
+        private static readonly int DIM_ELEMENT_MARGIN = 30;
+        private static readonly int DIM_TEXT_SIZE = 14;
+        private static readonly float DIM_TRIANGLE_SIZE = 0.5f;
+
+        private static readonly FontStyle LABEL_FONTSTYLE = FontStyle.Bold;
 
 
         /***********************
@@ -35,13 +32,11 @@ namespace WarBotEngine.Editeur
          ***********************/
 
 
+        protected Label label;
+
         protected int selection = -1;
 
         protected Container container;
-
-        protected int max_height;
-
-        protected Label main_label;
 
 
         /************************************
@@ -72,32 +67,30 @@ namespace WarBotEngine.Editeur
         {
             get
             {
-                int size = this.childs[0].Childs.Length;
+                int size = this.container.Childs.Length;
                 string[] res = new string[size];
                 for (int i = 0; i < size; i++)
                 {
-                    res[i] = ((Label)this.childs[0].Childs[i]).Text;
+                    res[i] = ((Label)this.container.Childs[i]).Text;
                 }
                 return res;
             }
             set
             {
-                this.childs[0].RemoveAllChilds();
+                this.container.RemoveAllChilds();
                 for (int i = 0; i < value.Length; i++)
                 {
                     Label label = new Label(new Rect(0, i * DIM_ELEMENT_HEIGHT, this.area.width - Scrollbar.DIM_WIDTH, DIM_ELEMENT_HEIGHT), value[i]);
                     label.TextAlign = TextAnchor.MiddleLeft;
-                    label.Clic += OnSelect;
                     label.Margin = DIM_ELEMENT_MARGIN;
-                    this.childs[0].AddChild(label);
+                    label.Clic += OnSelect;
+                    this.container.AddChild(label);
                 }
                 if (value.Length == 0) this.container.LocalArea = new Rect(0, this.area.height, this.area.width, DIM_ELEMENT_HEIGHT);
-                else if (value.Length * DIM_ELEMENT_HEIGHT > this.max_height) this.container.LocalArea = new Rect(0, this.area.height, this.area.width, this.max_height);
-                else this.container.LocalArea = new Rect(0, this.area.height, this.area.width, value.Length * DIM_ELEMENT_HEIGHT);
+                else this.container.LocalArea = new Rect(0, this.area.height, this.area.width, value.Length * DIM_ELEMENT_HEIGHT + DIM_TEXT_SIZE);
 
                 if (value.Length == 0) this.selection = -1;
                 else this.selection = 0;
-                this.main_label.Text = this.Selection;
             }
         }
 
@@ -118,15 +111,13 @@ namespace WarBotEngine.Editeur
                 int size = this.childs[0].Childs.Length;
                 for (int i = 0; i < size; i++)
                 {
-                    if (((Label)this.childs[0].Childs[i]).Text == value)
+                    if (((Label)this.container.Childs[i]).Text == value)
                     {
                         this.selection = i;
-                        this.main_label.Text = this.Selection;
                         return;
                     }
                 }
                 this.selection = -1;
-                this.main_label.Text = "";
             }
         }
 
@@ -137,43 +128,52 @@ namespace WarBotEngine.Editeur
 
 
         /// <summary>
-        /// Constructeur de base du sélecteur
+        /// Constructeur de base d'une catégorie
         /// </summary>
-        /// <param name="area">zone du widget</param>
-        /// <param name="height">hauteur de déploiement</param>
-        public Selector(Rect area, int height)
+        /// <param name="name">nom à afficher</param>
+        /// <param name="pos">coordonnées locales</param>
+        /// <param name="width">largeur</param>
+        public Category(string name, Vector2 pos, int width)
         {
-            this.area = area;
-            this.max_height = height;
-            this.container = new Container(new Rect(0, this.area.height, this.area.width, DIM_ELEMENT_HEIGHT));
-            this.AddChild(container);
+            this.area = new Rect(pos.x, pos.y, width, DIM_ELEMENT_HEIGHT);
+            this.container = new Container(new Rect(0, this.area.height, this.area.width, 0));
+            this.AddChild(this.container);
+            this.label = new Label(new Rect(0, 0, this.area.width, this.area.height), name);
+            this.AddChild(this.label);
 
             this.container.Parent = this;
-            this.container.AllowScrollbar = true;
-            this.container.Background = COLOR_CONTAINER_COLOR;
-
-            this.main_label = new Label(new Rect(DIM_PADDING, DIM_PADDING, this.area.width - this.area.height - DIM_PADDING, this.area.height - 2 * DIM_PADDING), "");
-            this.main_label.Parent = this;
-            this.main_label.Color = COLOR_3;
-            this.main_label.Background = COLOR_2;
-            this.main_label.Margin = DIM_ELEMENT_MARGIN;
-            this.main_label.TextStyle = FontStyle.Bold;
-            this.main_label.TextAlign = TextAnchor.MiddleLeft;
-
             this.container.Active = false;
+
+            this.label.Parent = this;
+            this.label.Margin = DIM_MARGIN;
+            this.label.TextAlign = TextAnchor.MiddleLeft;
+            this.label.TextSize = DIM_TEXT_SIZE;
+            this.label.TextStyle = LABEL_FONTSTYLE;
+            this.label.Clic += OnLabelClic;
+        }
+
+        /// <summary>
+        /// Appelée lorsque l'on clique sur le label principal
+        /// </summary>
+        /// <param name="widget">widget</param>
+        /// <param name="button">bouton de la souris</param>
+        /// <param name="x">coordonées en x</param>
+        /// <param name="y">coordonées en y</param>
+        protected void OnLabelClic(Widget widget, int button, int x, int y)
+        {
+            this.Deploy(!this.container.Active);
         }
 
         /// <summary>
         /// Appelée lors du clic sur un élément du sélecteur
         /// </summary>
-        /// <param name="widget"></param>
-        /// <param name="button"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
+        /// <param name="widget">widget</param>
+        /// <param name="button">bouton de la souris</param>
+        /// <param name="x">coordonées en x</param>
+        /// <param name="y">coordonées en y</param>
         protected void OnSelect(Widget widget, int button, int x, int y)
         {
             this.Selection = ((Label)widget).Text;
-            this.Tuck();
             if (this.SelectItem != null)
                 SelectItem(this, this.Selection);
         }
@@ -187,6 +187,7 @@ namespace WarBotEngine.Editeur
             this.container.Active = true;
             if (this.DeployOrTuck != null)
                 this.DeployOrTuck(this, true);
+            this.LocalArea = new Rect(this.area.x, this.area.y, this.area.width, this.area.height + this.container.LocalArea.height);
         }
 
         /// <summary>
@@ -196,9 +197,10 @@ namespace WarBotEngine.Editeur
         public void Deploy(bool state)
         {
             if (this.container.Active == state) return;
-            this.container.Active = state;
-            if (this.DeployOrTuck != null)
-                this.DeployOrTuck(this, state);
+            if (state)
+                this.Deploy();
+            else
+                this.Tuck();
         }
 
         /// <summary>
@@ -210,63 +212,41 @@ namespace WarBotEngine.Editeur
             this.container.Active = false;
             if (this.DeployOrTuck != null)
                 this.DeployOrTuck(this, false);
+            this.LocalArea = new Rect(this.area.x, this.area.y, this.area.width, this.label.LocalArea.height);
         }
-
-
-        /***********************************
-         ****** METHODES D'EVENEMENTS ******
-         ***********************************/
-         
 
         public override void OnDrawWithGL()
         {
-            if (!this.active) return;
-            GL.Begin(GL.QUADS);
-            GL.Color(COLOR_1);
-            Rect rect = this.GlobalArea;
-            GL.Vertex3(rect.xMin, rect.yMin, 0);
-            GL.Vertex3(rect.xMax, rect.yMin, 0);
-            GL.Vertex3(rect.xMax, rect.yMax, 0);
-            GL.Vertex3(rect.xMin, rect.yMax, 0);
-            GL.End();
-            this.main_label.OnDraw();
+            base.OnDrawWithGL();
 
-            rect.x += rect.width - rect.height;
-            rect.width = DIM_TRIANGLE_SIZE * rect.height;
-            rect.height = 0.7f * rect.width;
-            rect.x += (this.area.height - rect.width) / 2;
-            rect.y += (this.area.height - rect.height) / 2;
+            Rect rect = this.label.GlobalArea;
             GL.Begin(GL.TRIANGLES);
-            GL.Color(COLOR_2);
+            GL.Color(Color.black);
             if (this.container.Active)
             {
                 //Flèche "bas"
+                rect.width = DIM_TRIANGLE_SIZE * this.label.LocalArea.height;
+                rect.height = 0.7f * rect.width;
+                rect.x += (this.label.LocalArea.height - rect.width) / 2;
+                rect.y += (this.label.LocalArea.height - rect.height) / 2;
                 GL.Vertex3(rect.xMin, rect.yMin, 0);
                 GL.Vertex3((rect.xMin + rect.xMax) / 2, rect.yMax, 0);
                 GL.Vertex3(rect.xMax, rect.yMin, 0);
             }
             else
             {
-                //Flèche "haut"
+                //Flèche "droite"
+                rect.height = DIM_TRIANGLE_SIZE * this.label.LocalArea.height;
+                rect.width = 0.7f * rect.height;
+                rect.x += (this.label.LocalArea.height - rect.width) / 2;
+                rect.y += (this.label.LocalArea.height - rect.height) / 2;
+                GL.Vertex3(rect.xMin, rect.yMin, 0);
+                GL.Vertex3(rect.xMax, (rect.yMin + rect.yMax) / 2, 0);
                 GL.Vertex3(rect.xMin, rect.yMax, 0);
-                GL.Vertex3((rect.xMin + rect.xMax) / 2, rect.yMin, 0);
-                GL.Vertex3(rect.xMax, rect.yMax, 0);
             }
             GL.End();
         }
 
-        public override void OnMouseEvent(int button, bool pressed, int x, int y)
-        {
-            if (!this.active) return;
-            base.OnMouseEvent(button, pressed, x, y);
-            if (pressed)
-            {
-                if (this.GlobalArea.Contains(new Vector2(x, y)))
-                    this.Deploy(!this.childs[0].Active);
-                else if (!this.container.GlobalArea.Contains(new Vector2(x, y)))
-                    this.Tuck();
-            }
-        }
-
     }
+
 }

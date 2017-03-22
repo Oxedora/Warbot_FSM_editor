@@ -5,6 +5,9 @@ using UnityEngine;
 namespace WarBotEngine.Editeur
 {
 
+    /// <summary>
+    /// Conteneur de widgets
+    /// </summary>
     public class Container : Widget
     {
 
@@ -42,7 +45,18 @@ namespace WarBotEngine.Editeur
         /// <summary>
         /// Positions initiales des widget
         /// </summary>
-        List<Vector2> positions = new List<Vector2>();
+        protected List<Vector2> positions = new List<Vector2>();
+
+
+        /************************************
+         ****** EVENEMENTS SPECIFIQUES ******
+         ************************************/
+
+
+        /// <summary>
+        /// Appelée lors de la mise à jour des élements dans le conteneur
+        /// </summary>
+        public event Widget.EventDelegate Refresh = null;
 
 
         /************************
@@ -112,7 +126,7 @@ namespace WarBotEngine.Editeur
         /// <summary>
         /// Rafraichit l'affichage des éléments du container
         /// </summary>
-        protected void RefreshDiplaying()
+        protected virtual void RefreshDiplaying()
         {
             foreach (Widget widget in this.childs)
             {
@@ -121,6 +135,8 @@ namespace WarBotEngine.Editeur
                 else
                     widget.Active = true;
             }
+            if (this.Refresh != null)
+                this.Refresh(this, null);
         }
 
 
@@ -128,7 +144,15 @@ namespace WarBotEngine.Editeur
          ****** METHODES D'EVENEMENTS ******
          ***********************************/
 
-
+            
+        public override void OnDraw()
+        {
+            if (!this.active) return;
+            base.OnDraw();
+            this.motionscroll.OnDraw();
+            this.scrollbar.OnDraw();
+        }
+        
         public override void OnDrawWithGL()
         {
             if (!this.Active) return;
@@ -143,21 +167,18 @@ namespace WarBotEngine.Editeur
                 GL.Vertex3(rect.xMin, rect.yMax, 0);
                 GL.End();
             }
-            base.OnDrawWithGL();
-            this.motionscroll.OnDrawWithGL();
-            this.scrollbar.OnDrawWithGL();
         }
 
         public override void OnMouseEvent(int button, bool pressed, int x, int y)
         {
-            if (!this.Active) return;
+            if (!this.Active || (!this.GlobalArea.Contains(new Vector2(x, y)) && !this.focus)) return;
             base.OnMouseEvent(button, pressed, x, y);
             this.scrollbar.OnMouseEvent(button, pressed, x, y);
         }
         
         public override void OnMotionEvent(int x, int y)
         {
-            if (!this.Active) return;
+            if (!this.Active || (!this.GlobalArea.Contains(new Vector2(x, y)) && !this.focus)) return;
             base.OnMotionEvent(x, y);
             this.scrollbar.OnMotionEvent(x, y);
             this.motionscroll.OnMotionEvent(x, y);

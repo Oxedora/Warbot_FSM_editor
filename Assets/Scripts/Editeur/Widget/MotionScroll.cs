@@ -5,6 +5,9 @@ using UnityEngine;
 namespace WarBotEngine.Editeur
 {
 
+    /// <summary>
+    /// Scolling horizontal par passage du curseur ou SHIFT + Scroll
+    /// </summary>
     public class MotionScroll : Widget
     {
 
@@ -59,9 +62,9 @@ namespace WarBotEngine.Editeur
             {
                 scroll_width = value;
                 if (actual_value > scroll_width - this.area.width)
-                    actual_value = scroll_width - this.area.width;
+                    CurrentValue = scroll_width - this.area.width;
                 if (actual_value < 0)
-                    actual_value = 0;
+                    CurrentValue = 0;
             }
         }
 

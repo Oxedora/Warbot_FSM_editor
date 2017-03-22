@@ -14,7 +14,8 @@ namespace WarBotEngine.Editeur
         public static readonly float DIM_SELECTOR_WIDTH = 0.75f;
         public static readonly int DIM_SELECTOR_HEIGHT = 30;
 
-        public static readonly float DIM_SELECTOR_DROP_HEIGHT = 1f;
+        public static readonly float DIM_SELECTOR_DROP_HEIGHT_1 = 0.9f;
+        public static readonly float DIM_SELECTOR_DROP_HEIGHT_2 = 0.5f;
 
         private static readonly Color BACKGROUND_COLOR = new Color((float)0x73 / 255, (float)0x93 / 255, (float)0xa7 / 255); //#7393a7
 
@@ -23,8 +24,8 @@ namespace WarBotEngine.Editeur
         public TeamSelection() : base(new Rect(0, 0, Screen.width * DIM_WIDTH, Screen.height * DIM_HEIGHT))
         {
             this.Background = BACKGROUND_COLOR;
-            team_selector = new Selector(new Rect(this.area.width * (1 - DIM_SELECTOR_WIDTH) / 2, (this.area.height - 2 * DIM_SELECTOR_HEIGHT) / 3, DIM_SELECTOR_WIDTH * this.area.width, DIM_SELECTOR_HEIGHT), (int)(DIM_SELECTOR_DROP_HEIGHT * this.area.height));
-            unit_selector = new Selector(new Rect(this.area.width * (1 - DIM_SELECTOR_WIDTH) / 2, (this.area.height - 2 * DIM_SELECTOR_HEIGHT) * 2 / 3 + DIM_SELECTOR_HEIGHT, DIM_SELECTOR_WIDTH * this.area.width, DIM_SELECTOR_HEIGHT), (int)(DIM_SELECTOR_DROP_HEIGHT * this.area.height));
+            team_selector = new Selector(new Rect(this.area.width * (1 - DIM_SELECTOR_WIDTH) / 2, (this.area.height - 2 * DIM_SELECTOR_HEIGHT) / 3, DIM_SELECTOR_WIDTH * this.area.width, DIM_SELECTOR_HEIGHT), (int)(DIM_SELECTOR_DROP_HEIGHT_1 * this.area.height));
+            unit_selector = new Selector(new Rect(this.area.width * (1 - DIM_SELECTOR_WIDTH) / 2, (this.area.height - 2 * DIM_SELECTOR_HEIGHT) * 2 / 3 + DIM_SELECTOR_HEIGHT, DIM_SELECTOR_WIDTH * this.area.width, DIM_SELECTOR_HEIGHT), (int)(DIM_SELECTOR_DROP_HEIGHT_2 * this.area.height));
             this.AddChild(unit_selector);
             this.AddChild(team_selector);
             team_selector.SelectItem += OnSelectItem;
