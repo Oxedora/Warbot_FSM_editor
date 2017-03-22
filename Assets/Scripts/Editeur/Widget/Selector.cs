@@ -12,6 +12,12 @@ namespace WarBotEngine.Editeur
 	public class Selector : Widget
     {
 
+
+        /*********************************
+         ****** ATTRIBUTS STATIQUES ******
+         *********************************/
+
+
         private static readonly int DIM_PADDING = 2;
         private static readonly int DIM_ELEMENT_HEIGHT = 22;
         private static readonly int DIM_ELEMENT_MARGIN = 15;
@@ -22,14 +28,45 @@ namespace WarBotEngine.Editeur
         private static readonly Color COLOR_3 = new Color((float)0xf6 / 255, (float)0x6e / 255, (float)0x00 / 255); //f66e00
         private static readonly Color COLOR_CONTAINER_COLOR = new Color((float)0xeb / 255, (float)0xe9 / 255, (float)0xf6 / 255); //ebe9f6
 
-        private int selection = -1;
 
-        private Container container;
+        /***********************
+         ****** ATTRIBUTS ******
+         ***********************/
 
-        private int max_height;
 
-        private Label main_label;
+        protected int selection = -1;
 
+        protected Container container;
+
+        protected int max_height;
+
+        protected Label main_label;
+
+
+        /************************************
+         ****** EVENEMENTS SPECIFIQUES ******
+         ************************************/
+
+
+        /// <summary>
+        /// Appelé lors de la sélection du item
+        /// </summary>
+        public event Widget.EventDelegate SelectItem = null;
+
+        /// <summary>
+        /// Appelé lors du déploiement ou du repli du sélecteur
+        /// </summary>
+        public event Widget.EventDelegate DeployOrTuck = null;
+
+
+        /************************
+         ****** ACCESSEURS ******
+         ************************/
+
+
+        /// <summary>
+        /// Liste des éléments du sélecteur
+        /// </summary>
         public string[] Elements
         {
             get
@@ -63,6 +100,9 @@ namespace WarBotEngine.Editeur
             }
         }
 
+        /// <summary>
+        /// Sélection actuelle
+        /// </summary>
         public string Selection
         {
             get
@@ -89,7 +129,18 @@ namespace WarBotEngine.Editeur
             }
         }
 
-		public Selector(Rect area, int height)
+
+        /********************************************
+         ****** METHODES SPECIFIQUES AU WIDGET ******
+         ********************************************/
+
+
+        /// <summary>
+        /// Constructeur de base du sélecteur
+        /// </summary>
+        /// <param name="area">zone du widget</param>
+        /// <param name="height">hauteur de déploiement</param>
+        public Selector(Rect area, int height)
         {
             this.area = area;
             this.max_height = height;
@@ -111,14 +162,64 @@ namespace WarBotEngine.Editeur
             this.container.Active = false;
         }
 
-        public void OnSelect(Widget widget, int button, int x, int y)
+        /// <summary>
+        /// Appelée lors du clic sur un élément du sélecteur
+        /// </summary>
+        /// <param name="widget"></param>
+        /// <param name="button"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        protected void OnSelect(Widget widget, int button, int x, int y)
         {
             this.Selection = ((Label)widget).Text;
-            this.container.Active = false;
+            this.Tuck();
+            if (this.SelectItem != null)
+                SelectItem(this, this.Selection);
         }
+
+        /// <summary>
+        /// Déploie le sélecteur
+        /// </summary>
+        public void Deploy()
+        {
+            if (this.container.Active == true) return;
+            this.container.Active = true;
+            if (this.DeployOrTuck != null)
+                this.DeployOrTuck(this, true);
+        }
+
+        /// <summary>
+        /// Déploie ou replie le sélecteur
+        /// </summary>
+        /// <param name="state">état du sélecteur</param>
+        public void Deploy(bool state)
+        {
+            if (this.container.Active == state) return;
+            this.container.Active = state;
+            if (this.DeployOrTuck != null)
+                this.DeployOrTuck(this, state);
+        }
+
+        /// <summary>
+        /// Repli le sélecteur
+        /// </summary>
+        public void Tuck()
+        {
+            if (this.container.Active == false) return;
+            this.container.Active = false;
+            if (this.DeployOrTuck != null)
+                this.DeployOrTuck(this, false);
+        }
+
+
+        /***********************************
+         ****** METHODES D'EVENEMENTS ******
+         ***********************************/
+
 
         public override void OnDrawWithGL()
         {
+            if (!this.active) return;
             base.OnDrawWithGL();
             GL.Begin(GL.QUADS);
             GL.Color(COLOR_1);
@@ -156,15 +257,22 @@ namespace WarBotEngine.Editeur
 
         public override void OnDrawWithoutGL()
         {
+            if (!this.active) return;
             base.OnDrawWithoutGL();
             this.main_label.OnDrawWithoutGL();
         }
 
         public override void OnMouseEvent(int button, bool pressed, int x, int y)
         {
+            if (!this.active) return;
             base.OnMouseEvent(button, pressed, x, y);
-            if (pressed && this.GlobalArea.Contains(new Vector2(x, y)))
-                this.childs[0].Active = !this.childs[0].Active;
+            if (pressed)
+            {
+                if (this.GlobalArea.Contains(new Vector2(x, y)))
+                    this.Deploy(!this.childs[0].Active);
+                else
+                    this.Tuck();
+            }
         }
 
     }

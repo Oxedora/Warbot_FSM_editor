@@ -83,7 +83,6 @@
     <Compile Include="Assets\Scripts\Editeur\Widget\Container.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget\Label.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget\MotionScroll.cs" />
-    <Compile Include="Assets\Scripts\Editeur\Widget\PrimitiveSelector.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget\Scrollbar.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget\Selector.cs" />
   </ItemGroup>
