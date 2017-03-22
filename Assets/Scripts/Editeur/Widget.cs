@@ -335,28 +335,30 @@ namespace WarBotEngine.Editeur
         }
 
         /// <summary>
-        /// Appelée lors du rendu de la scene avec les fonctions OpenGL
+        /// Appelée lors du rendu
         /// </summary>
-        public virtual void OnDrawWithGL()
+        public virtual void OnDraw()
         {
             if (!this.Active) return;
+            this.OnDrawWithGL();
+            MainLayout.Actual.PopGL();
+            this.OnDrawWithoutGL();
+            MainLayout.Actual.PushGL();
             foreach (Widget w in childs)
             {
-                w.OnDrawWithGL();
+                w.OnDraw();
             }
         }
 
         /// <summary>
+        /// Appelée lors du rendu de la scene avec les fonctions OpenGL
+        /// </summary>
+        public virtual void OnDrawWithGL() { }
+
+        /// <summary>
         /// Appelée après le rendu de la scene avec les fonctions OpenGL
         /// </summary>
-        public virtual void OnDrawWithoutGL()
-        {
-            if (!this.Active) return;
-            foreach (Widget w in childs)
-            {
-                w.OnDrawWithoutGL();
-            }
-        }
+        public virtual void OnDrawWithoutGL() { }
 
         /// <summary>
         /// Appelée lors de la mise à jour des composants
@@ -411,9 +413,9 @@ namespace WarBotEngine.Editeur
                 }
             }
 
-            foreach (Widget w in childs)
+            for (int i = 0; i < this.childs.Count; i++)
             {
-                w.OnMouseEvent(button, pressed, x, y);
+                this.childs[i].OnMouseEvent(button, pressed, x, y);
             }
         }
 

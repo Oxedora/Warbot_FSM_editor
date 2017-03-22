@@ -75,14 +75,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Editeur\BehaviorEditor.cs" />
+    <Compile Include="Assets\Scripts\Editeur\Layout\BehaviorEditor.cs" />
+    <Compile Include="Assets\Scripts\Editeur\Layout\DragAndDrop.cs" />
+    <Compile Include="Assets\Scripts\Editeur\Layout\PrimitivesCollection.cs" />
+    <Compile Include="Assets\Scripts\Editeur\Layout\TeamSelection.cs" />
     <Compile Include="Assets\Scripts\Editeur\MainLayout.cs" />
-    <Compile Include="Assets\Scripts\Editeur\PrimitivesCollection.cs" />
-    <Compile Include="Assets\Scripts\Editeur\TeamSelection.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget.cs" />
+    <Compile Include="Assets\Scripts\Editeur\Widget\Category.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget\Container.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget\Label.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget\MotionScroll.cs" />
+    <Compile Include="Assets\Scripts\Editeur\Widget\Primitive.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget\Scrollbar.cs" />
     <Compile Include="Assets\Scripts\Editeur\Widget\Selector.cs" />
   </ItemGroup>
