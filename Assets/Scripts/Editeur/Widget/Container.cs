@@ -144,7 +144,15 @@ namespace WarBotEngine.Editeur
          ****** METHODES D'EVENEMENTS ******
          ***********************************/
 
-            
+
+        public override void OnUpdate()
+        {
+            if (!this.Active) return;
+            base.OnUpdate();
+            this.scrollbar.OnUpdate();
+            this.motionscroll.OnUpdate();
+        }
+
         public override void OnDraw()
         {
             if (!this.active) return;
@@ -218,6 +226,9 @@ namespace WarBotEngine.Editeur
                 widget.Active = false;
             else
                 widget.Active = true;
+
+            if (this.Refresh != null)
+                this.Refresh(this, null);
         }
 
         public override void RemoveChild(Widget widget)
@@ -233,8 +244,11 @@ namespace WarBotEngine.Editeur
             }
             this.inner_width = x_max;
             this.motionscroll.ScrollWidth = this.inner_width;
-            this.inner_width = y_max;
+            this.inner_height = y_max;
             this.scrollbar.ScrollHeight = this.inner_height;
+
+            if (this.Refresh != null)
+                this.Refresh(this, null);
         }
 
         public override void RemoveAllChilds()
@@ -245,6 +259,9 @@ namespace WarBotEngine.Editeur
             this.motionscroll.ScrollWidth = 0;
             this.scrollbar.ScrollHeight = 0;
             this.positions.Clear();
+
+            if (this.Refresh != null)
+                this.Refresh(this, null);
         }
 
     }

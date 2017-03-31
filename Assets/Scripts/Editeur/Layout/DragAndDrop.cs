@@ -17,6 +17,7 @@ namespace WarBotEngine.Editeur
 
         public DragAndDrop(PrimitivesCollection primitives, BehaviorEditor editor)
         {
+            this.LocalArea = new Rect(0, 0, Screen.width, Screen.height);
             this.primitives = primitives;
             this.editor = editor;
             foreach (Category ca in primitives.Categories)

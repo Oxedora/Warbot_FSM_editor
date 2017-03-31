@@ -21,7 +21,7 @@ namespace WarBotEngine.Editeur
         private static readonly Color COLOR_1 = new Color((float)0x27 / 255, (float)0x72 / 255, (float)0xdb / 255, 0.2f);
         private static readonly Color COLOR_2 = new Color((float)0x27 / 255, (float)0x72 / 255, (float)0xdb / 255, 0.5f);
 
-        private static readonly float SCROLL_MOTION_SPEED = 3.0f;
+        private static readonly float SCROLL_MOTION_SPEED = 200.0f;
         private static readonly float SCROLL_MOUSE_SPEED = 3.0f;
 
         private static readonly float MOTION_MAX_SPEED = 1f;
@@ -41,6 +41,8 @@ namespace WarBotEngine.Editeur
         //ATTRIBUTS D'EVENEMENTS
 
         private bool is_scrolling = false;
+
+        private float scroll_direction = 0f;
 
         private Vector2 last_mouse_pos = new Vector2();
 
@@ -117,6 +119,15 @@ namespace WarBotEngine.Editeur
          ***********************************/
 
 
+        public override void OnUpdate()
+        {
+            base.OnUpdate();
+            if (this.is_scrolling)
+            {
+                this.CurrentValue += this.scroll_direction * MotionScroll.SCROLL_MOTION_SPEED * Time.deltaTime;
+            }
+        }
+
         public override void OnDrawWithGL()
         {
             if (!this.active || this.area.width >= this.scroll_width) return;
@@ -163,6 +174,7 @@ namespace WarBotEngine.Editeur
                     {
                         this.CurrentValue -= MotionScroll.SCROLL_MOTION_SPEED * Time.deltaTime;
                         this.is_scrolling = true;
+                        this.scroll_direction = -1f;
                     }
                 }
                 else if (rect2.Contains(mouse_pos))
@@ -171,6 +183,7 @@ namespace WarBotEngine.Editeur
                     {
                         this.CurrentValue += MotionScroll.SCROLL_MOTION_SPEED * Time.deltaTime;
                         this.is_scrolling = true;
+                        this.scroll_direction = 1f;
                     }
                 }
                 else

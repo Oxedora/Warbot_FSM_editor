@@ -504,6 +504,20 @@ namespace WarBotEngine.Editeur
             childs.Clear();
         }
 
+        /// <summary>
+        /// Détermine si un événement peut provoquer une intéraction avec le widget
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool CanInteract()
+        {
+            foreach (Widget w in childs)
+            {
+                if (w.Active)
+                    return true;
+            }
+            return false;
+        }
+
     }
 
 }
