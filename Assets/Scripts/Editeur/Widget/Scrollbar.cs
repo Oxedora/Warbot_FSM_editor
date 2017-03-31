@@ -26,7 +26,7 @@ namespace WarBotEngine.Editeur
         private static readonly Color COLOR_3 = new Color((float)0xbd / 255, (float)0xc3 / 255, (float)0xc7 / 255);
         private static readonly Color COLOR_4 = new Color((float)0xec / 255, (float)0xf0 / 255, (float)0xf1 / 255);
 
-        private static readonly float SCROLL_SPEED = 3.0f;
+        private static readonly float SCROLL_SPEED = 200.0f;
 
 
         /***********************
@@ -49,6 +49,10 @@ namespace WarBotEngine.Editeur
         private float clic_value = 0;
 
         private Vector2 mouse_position = new Vector2();
+
+        private bool is_scrolling = false;
+
+        private float scroll_direction = 0f;
 
 
         /************************
@@ -122,6 +126,16 @@ namespace WarBotEngine.Editeur
          ****** METHODES D'EVENEMENTS ******
          ***********************************/
 
+
+        public override void OnUpdate()
+        {
+            if (!this.Active) return;
+            base.OnUpdate();
+            if (this.is_scrolling)
+            {
+                this.CurrentValue += this.scroll_direction * Scrollbar.SCROLL_SPEED * Time.deltaTime;
+            }
+        }
 
         public override void OnDrawWithGL()
         {
@@ -225,19 +239,24 @@ namespace WarBotEngine.Editeur
                     zone.height = zone.width;
                     if (zone.Contains(new Vector2(x, y)))
                     {
-                        this.CurrentValue -= Scrollbar.SCROLL_SPEED;
+                        this.CurrentValue -= Scrollbar.SCROLL_SPEED * Time.deltaTime;
+                        this.scroll_direction = -1f;
+                        this.is_scrolling = true;
                     }
                     zone = this.GlobalArea;
                     zone.y = zone.yMax - zone.width;
                     zone.height = zone.width;
                     if (zone.Contains(new Vector2(x, y)))
                     {
-                        this.CurrentValue += Scrollbar.SCROLL_SPEED;
+                        this.CurrentValue += Scrollbar.SCROLL_SPEED * Time.deltaTime;
+                        this.scroll_direction = 1f;
+                        this.is_scrolling = true;
                     }
                 }
                 else
                 {
                     this.is_clicked = false;
+                    this.is_scrolling = false;
                 }
             }
         }

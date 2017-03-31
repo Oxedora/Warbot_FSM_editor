@@ -29,6 +29,8 @@ namespace WarBotEngine.Editeur
 
         private DragAndDrop drag_and_drop;
 
+        private Container upper_container;
+
 
         /****************************
          ****** OBJETS D'UNITY ******
@@ -53,6 +55,11 @@ namespace WarBotEngine.Editeur
         /// </summary>
         public Widget[] Widgets { get { return widgets.ToArray(); } }
 
+        /// <summary>
+        /// Conteneur de widgets flottants
+        /// </summary>
+        public Widget UpperContainer { get { return this.upper_container; } }
+
 
         /****************************
          ****** APPELS D'UNITY ******
@@ -67,6 +74,7 @@ namespace WarBotEngine.Editeur
             MainLayout.actual = this;
             widgets = new List<Widget>();
             mouse_position = new Vector2();
+            this.upper_container = new Container(new Rect(0, 0, Screen.width, Screen.height));
 
             this.AddWidget(new BehaviorEditor());
             this.AddWidget(new PrimitivesCollection());
@@ -74,6 +82,7 @@ namespace WarBotEngine.Editeur
 
             this.drag_and_drop = new DragAndDrop((PrimitivesCollection)this.widgets[1], (BehaviorEditor)this.widgets[0]);
             this.AddWidget(this.drag_and_drop);
+            this.AddWidget(this.upper_container);
         }
 
         /// <summary>
@@ -243,9 +252,14 @@ namespace WarBotEngine.Editeur
         public void OnKeyEvent(KeyCode keycode, bool state)
         {
             //print("[Key]: " + keycode + " = " + state);
-            foreach (Widget o in widgets)
-            {
-                o.OnKeyEvent(keycode, state);
+            if (this.upper_container.CanInteract())
+                this.upper_container.OnKeyEvent(keycode, state);
+            else {
+                foreach (Widget o in widgets)
+                {
+                    if (this.upper_container != o)
+                        o.OnKeyEvent(keycode, state);
+                }
             }
         }
 
@@ -259,9 +273,14 @@ namespace WarBotEngine.Editeur
         public void OnMouseEvent(int button, bool pressed, int x, int y)
         {
             //print("[Mouse]: " + button + " = " + pressed + " -> " + x + " , " + y);
-            foreach (Widget o in widgets)
-            {
-                o.OnMouseEvent(button, pressed, x, y);
+            if (this.upper_container.CanInteract())
+                this.upper_container.OnMouseEvent(button, pressed, x, y);
+            else {
+                foreach (Widget o in widgets)
+                {
+                    if (this.upper_container != o && o.GlobalArea.Contains(new Vector2(x, y)))
+                        o.OnMouseEvent(button, pressed, x, y);
+                }
             }
         }
 
@@ -273,9 +292,14 @@ namespace WarBotEngine.Editeur
         public void OnMotionEvent(int x, int y)
         {
             //print("[Motion]: " + x + " , " + y);
-            foreach (Widget o in widgets)
-            {
-                o.OnMotionEvent(x, y);
+            if (this.upper_container.CanInteract())
+                this.upper_container.OnMotionEvent(x, y);
+            else {
+                foreach (Widget o in widgets)
+                {
+                    if (this.upper_container != o && o.GlobalArea.Contains(new Vector2(x, y)))
+                        o.OnMotionEvent(x, y);
+                }
             }
         }
 
@@ -286,9 +310,14 @@ namespace WarBotEngine.Editeur
         public void OnScrollEvent(int delta)
         {
             //print("[Scroll]: " + delta);
-            foreach (Widget o in widgets)
-            {
-                o.OnScrollEvent(delta);
+            if (this.upper_container.CanInteract())
+                this.upper_container.OnScrollEvent(delta);
+            else {
+                foreach (Widget o in widgets)
+                {
+                    if (this.upper_container != o)
+                        o.OnScrollEvent(delta);
+                }
             }
         }
         

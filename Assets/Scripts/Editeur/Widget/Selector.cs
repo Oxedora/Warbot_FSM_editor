@@ -72,28 +72,28 @@ namespace WarBotEngine.Editeur
         {
             get
             {
-                int size = this.childs[0].Childs.Length;
+                int size = this.container.Childs.Length;
                 string[] res = new string[size];
                 for (int i = 0; i < size; i++)
                 {
-                    res[i] = ((Label)this.childs[0].Childs[i]).Text;
+                    res[i] = ((Label)this.container.Childs[i]).Text;
                 }
                 return res;
             }
             set
             {
-                this.childs[0].RemoveAllChilds();
+                this.container.RemoveAllChilds();
                 for (int i = 0; i < value.Length; i++)
                 {
                     Label label = new Label(new Rect(0, i * DIM_ELEMENT_HEIGHT, this.area.width - Scrollbar.DIM_WIDTH, DIM_ELEMENT_HEIGHT), value[i]);
                     label.TextAlign = TextAnchor.MiddleLeft;
                     label.Clic += OnSelect;
                     label.Margin = DIM_ELEMENT_MARGIN;
-                    this.childs[0].AddChild(label);
+                    this.container.AddChild(label);
                 }
-                if (value.Length == 0) this.container.LocalArea = new Rect(0, this.area.height, this.area.width, DIM_ELEMENT_HEIGHT);
-                else if (value.Length * DIM_ELEMENT_HEIGHT > this.max_height) this.container.LocalArea = new Rect(0, this.area.height, this.area.width, this.max_height);
-                else this.container.LocalArea = new Rect(0, this.area.height, this.area.width, value.Length * DIM_ELEMENT_HEIGHT);
+                if (value.Length == 0) this.container.LocalArea = new Rect(this.GlobalArea.x, this.GlobalArea.y + this.area.height, this.area.width, DIM_ELEMENT_HEIGHT);
+                else if (value.Length * DIM_ELEMENT_HEIGHT > this.max_height) this.container.LocalArea = new Rect(this.GlobalArea.x, this.GlobalArea.y + this.area.height, this.area.width, this.max_height);
+                else this.container.LocalArea = new Rect(this.GlobalArea.x, this.GlobalArea.y + this.area.height, this.area.width, value.Length * DIM_ELEMENT_HEIGHT);
 
                 if (value.Length == 0) this.selection = -1;
                 else this.selection = 0;
@@ -115,10 +115,10 @@ namespace WarBotEngine.Editeur
             }
             set
             {
-                int size = this.childs[0].Childs.Length;
+                int size = this.container.Childs.Length;
                 for (int i = 0; i < size; i++)
                 {
-                    if (((Label)this.childs[0].Childs[i]).Text == value)
+                    if (((Label)this.container.Childs[i]).Text == value)
                     {
                         this.selection = i;
                         this.main_label.Text = this.Selection;
@@ -141,14 +141,16 @@ namespace WarBotEngine.Editeur
         /// </summary>
         /// <param name="area">zone du widget</param>
         /// <param name="height">hauteur de déploiement</param>
-        public Selector(Rect area, int height)
+        /// <param name="parent">widget parent</param>
+        public Selector(Rect area, int height, Widget parent)
         {
             this.area = area;
+            this.parent = parent;
             this.max_height = height;
-            this.container = new Container(new Rect(0, this.area.height, this.area.width, DIM_ELEMENT_HEIGHT));
-            this.AddChild(container);
+            this.container = new Container(new Rect(this.LocalArea.x, this.LocalArea.y + this.area.height, this.area.width, DIM_ELEMENT_HEIGHT));
+            MainLayout.Actual.UpperContainer.AddChild(this.container);
 
-            this.container.Parent = this;
+            this.container.Parent = MainLayout.Actual.UpperContainer;
             this.container.AllowScrollbar = true;
             this.container.Background = COLOR_CONTAINER_COLOR;
 
@@ -161,6 +163,7 @@ namespace WarBotEngine.Editeur
             this.main_label.TextAlign = TextAnchor.MiddleLeft;
 
             this.container.Active = false;
+            this.container.FocusChange += this.OnContainerFocusChange;
         }
 
         /// <summary>
@@ -262,10 +265,19 @@ namespace WarBotEngine.Editeur
             if (pressed)
             {
                 if (this.GlobalArea.Contains(new Vector2(x, y)))
-                    this.Deploy(!this.childs[0].Active);
+                {
+                    this.Deploy(!this.container.Active);
+                    this.container.Focus = true;
+                }
                 else if (!this.container.GlobalArea.Contains(new Vector2(x, y)))
                     this.Tuck();
             }
+        }
+
+        protected void OnContainerFocusChange(Widget w, bool focus)
+        {
+            if (!focus)
+                this.Tuck();
         }
 
     }

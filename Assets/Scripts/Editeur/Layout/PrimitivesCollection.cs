@@ -36,7 +36,7 @@ namespace WarBotEngine.Editeur
             category.Resize += OnCategoryResize;
             category.Elements = new string[]
             {
-                "Primitive 1",
+                "SI ALORS.. SINON..",
                 "Primitive 2",
                 "Primitive 3",
                 "Primitive 4",
