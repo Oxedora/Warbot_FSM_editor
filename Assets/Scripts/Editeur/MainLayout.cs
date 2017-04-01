@@ -56,6 +56,11 @@ namespace WarBotEngine.Editeur
         public Widget[] Widgets { get { return widgets.ToArray(); } }
 
         /// <summary>
+        /// Objet de Drag&Drop
+        /// </summary>
+        public DragAndDrop Dropper { get { return this.drag_and_drop; } }
+
+        /// <summary>
         /// Conteneur de widgets flottants
         /// </summary>
         public Widget UpperContainer { get { return this.upper_container; } }

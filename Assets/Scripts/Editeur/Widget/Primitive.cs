@@ -212,34 +212,11 @@ namespace WarBotEngine.Editeur
         public override void OnMouseEvent(int button, bool pressed, int x, int y)
         {
             base.OnMouseEvent(button, pressed, x, y);
-            if (pressed && this.title.Text != NAME_PRIMITIVE_BEGIN)
+            if (pressed && this.title.Text != NAME_PRIMITIVE_BEGIN && !typeof(PrimitiveContainer).Equals(this.GetType()) && this.GlobalArea.Contains(new Vector2(x, y)))
             {
-                if (this.GlobalArea.Contains(new Vector2(x, y)))
-                {
-                    this.is_clicked = true;
-                    this.saved_cursor = new Vector2(x, y);
-                    this.saved_position = this.LocalPosition;
-                }
-            }
-            else
-            {
-                if (this.is_clicked)
-                {
-                    ((Primitive)this.Parent).Next = null;
-                    this.Parent = null;
-                    BehaviorEditor.Actual.First.PushPrimitive(this, this.cursor);
-                }
-                this.is_clicked = false;
-            }
-        }
-
-        public override void OnMotionEvent(int x, int y)
-        {
-            base.OnMotionEvent(x, y);
-            this.cursor = new Vector2(x, y);
-            if (this.is_clicked)
-            {
-                this.LocalPosition = this.saved_position + (this.cursor - this.saved_cursor);
+                this.LocalArea = this.GlobalArea;
+                ((Primitive)this.Parent).Next = null;
+                MainLayout.Actual.Dropper.AddChild(this);
             }
         }
 

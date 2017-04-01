@@ -79,6 +79,16 @@ namespace WarBotEngine.Editeur
         /// </summary>
         public bool AllowMotionScroll { get { return motionscroll.Active; } set { motionscroll.Active = value; } }
 
+        /// <summary>
+        /// Valeur actuelle du scroll horizontal
+        /// </summary>
+        public float HorizontalScroll { get { return this.motionscroll.CurrentValue; } }
+
+        /// <summary>
+        /// Valeur actuelle du scroll vertical
+        /// </summary>
+        public float VerticalScroll { get { return this.scrollbar.CurrentValue; } }
+
 
         /********************************************
          ****** METHODES SPECIFIQUES AU WIDGET ******
@@ -179,14 +189,14 @@ namespace WarBotEngine.Editeur
 
         public override void OnMouseEvent(int button, bool pressed, int x, int y)
         {
-            if (!this.Active || (!this.GlobalArea.Contains(new Vector2(x, y)) && !this.focus)) return;
+            if (!this.Active) return;
             base.OnMouseEvent(button, pressed, x, y);
             this.scrollbar.OnMouseEvent(button, pressed, x, y);
         }
         
         public override void OnMotionEvent(int x, int y)
         {
-            if (!this.Active || (!this.GlobalArea.Contains(new Vector2(x, y)) && !this.focus)) return;
+            if (!this.Active) return;
             base.OnMotionEvent(x, y);
             this.scrollbar.OnMotionEvent(x, y);
             this.motionscroll.OnMotionEvent(x, y);
