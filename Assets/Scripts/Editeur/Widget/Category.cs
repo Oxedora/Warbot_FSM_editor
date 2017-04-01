@@ -17,13 +17,34 @@ namespace WarBotEngine.Editeur
          *********************************/
 
 
+        /// <summary>
+        /// Hauteur d'un élément
+        /// </summary>
         public static readonly int DIM_ELEMENT_HEIGHT = 22;
 
+        /// <summary>
+        /// Marge du titre de la catégorie
+        /// </summary>
         private static readonly int DIM_MARGIN = 20;
+
+        /// <summary>
+        /// Marge d'un élément
+        /// </summary>
         private static readonly int DIM_ELEMENT_MARGIN = 30;
+
+        /// <summary>
+        /// Hauteur du texte
+        /// </summary>
         private static readonly int DIM_TEXT_SIZE = 14;
+
+        /// <summary>
+        /// Dimension du triangle
+        /// </summary>
         private static readonly float DIM_TRIANGLE_SIZE = 0.5f;
 
+        /// <summary>
+        /// Style du titre de la catégorie
+        /// </summary>
         private static readonly FontStyle LABEL_FONTSTYLE = FontStyle.Bold;
 
 
@@ -32,10 +53,19 @@ namespace WarBotEngine.Editeur
          ***********************/
 
 
+        /// <summary>
+        /// Titre de la catégorie
+        /// </summary>
         protected Label label;
 
+        /// <summary>
+        /// Sélection actuelle
+        /// </summary>
         protected int selection = -1;
 
+        /// <summary>
+        /// Conteneur des éléments
+        /// </summary>
         protected Container container;
 
 

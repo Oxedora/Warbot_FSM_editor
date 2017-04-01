@@ -5,34 +5,93 @@ using UnityEngine;
 namespace WarBotEngine.Editeur
 {
 
+    /// <summary>
+    /// Primitive à placer dans l'éditeur
+    /// </summary>
     public class Primitive : Widget
     {
 
+
+        /*********************************
+         ****** ATTRIBUTS STATIQUES ******
+         *********************************/
+
+
+        /// <summary>
+        /// Largeur d'une primitive
+        /// </summary>
         public static readonly int DIM_WIDTH = 150;
-        private static readonly int DIM_TRIANGLE_SIZE = 20;
+
+        /// <summary>
+        /// Hauteur du titre d'une primitive
+        /// </summary>
         public static readonly int DIM_TITLE_HEIGHT = 20;
 
+        /// <summary>
+        /// Nom d'une primitive de départ
+        /// </summary>
         public static readonly string NAME_PRIMITIVE_BEGIN = "DEBUT";
 
+        /// <summary>
+        /// Couleur de fond
+        /// </summary>
         private static readonly Color COLOR_1 = new Color((float)0xcc / 255, (float)0xcc / 255, (float)0xff / 255);
+        /// <summary>
+        /// Couleur de contour
+        /// </summary>
         private static readonly Color COLOR_2 = new Color((float)0x00 / 255, (float)0x00 / 255, (float)0x00 / 255);
 
+
+        /***********************
+         ****** ATTRIBUTS ******
+         ***********************/
+
+            
+        /// <summary>
+        /// Titre de la primitive
+        /// </summary>
         protected Label title;
 
+        /// <summary>
+        /// Hauteur minimale de la primitive
+        /// </summary>
         protected int minimum_height = DIM_TITLE_HEIGHT;
 
+        /// <summary>
+        /// Primitives en entrée
+        /// </summary>
         protected List<PrimitiveContainer> inner = new List<PrimitiveContainer>();
 
+        /// <summary>
+        /// Primitives en sortie
+        /// </summary>
         protected List<PrimitiveContainer> outer = new List<PrimitiveContainer>();
 
+        /// <summary>
+        /// Primitive suivante
+        /// </summary>
         protected Primitive next = null;
 
-        protected Vector2 cursor = new Vector2(), saved_cursor, saved_position;
 
-        protected bool is_clicked = false;
+        /************************************
+         ****** EVENEMENTS SPECIFIQUES ******
+         ************************************/
 
+
+        /// <summary>
+        /// Appelé lors de l'extension des primitives
+        /// </summary>
         public event Widget.EventDelegate ExtendHeight;
 
+
+        /************************
+         ****** ACCESSEURS ******
+         ************************/
+
+
+        /// <summary>
+        /// Primitive suivante
+        /// </summary>
         public Primitive Next
         {
             get
@@ -59,6 +118,9 @@ namespace WarBotEngine.Editeur
             }
         }
 
+        /// <summary>
+        /// Dernière primitive de la colonne
+        /// </summary>
         public Primitive Last
         {
             get
@@ -77,6 +139,9 @@ namespace WarBotEngine.Editeur
             }
         }
 
+        /// <summary>
+        /// Hauteur totale de l'arbre
+        /// </summary>
         public int TotalHeight
         {
             get
@@ -88,6 +153,9 @@ namespace WarBotEngine.Editeur
             }
         }
 
+        /// <summary>
+        /// Largeur totale de l'arbre
+        /// </summary>
         public int TotalWidth
         {
             get
@@ -103,8 +171,22 @@ namespace WarBotEngine.Editeur
             }
         }
 
+
+        /********************************************
+         ****** METHODES SPECIFIQUES AU WIDGET ******
+         ********************************************/
+
+
+        /// <summary>
+        /// Constructeur vide d'une primitive
+        /// </summary>
         protected Primitive() {}
 
+        /// <summary>
+        /// Constructeur de base d'une primitive
+        /// </summary>
+        /// <param name="position">position de la primitive</param>
+        /// <param name="name">nom de la primitive</param>
         public Primitive(Vector2 position, string name)
         {
             if (name == NAME_PRIMITIVE_BEGIN)
@@ -138,6 +220,11 @@ namespace WarBotEngine.Editeur
             this.OnPrimitiveContainerExtend(null, null);
         }
 
+        /// <summary>
+        /// Tente de placer la primitive entrée en paramètre
+        /// </summary>
+        /// <param name="primitive">primitive à placer</param>
+        /// <param name="cursor">position du curseur</param>
         public virtual void PushPrimitive(Primitive primitive, Vector2 cursor)
         {
             if (this.GlobalArea.Contains(cursor))
@@ -154,6 +241,10 @@ namespace WarBotEngine.Editeur
             }
         }
 
+        /// <summary>
+        /// Appelée lors de l'extension de la primitive
+        /// </summary>
+        /// <param name="height"></param>
         public virtual void ExtendPrimitive(int height)
         {
             if (this.Parent != null && typeof(Primitive).Equals(this.Parent.GetType()))
@@ -162,6 +253,11 @@ namespace WarBotEngine.Editeur
                 this.ExtendHeight(this, (int)this.area.height + height);
         }
 
+        /// <summary>
+        /// Redimensionne la primitive (appelée lors de l'extension des fils)
+        /// </summary>
+        /// <param name="w">widget</param>
+        /// <param name="args">arguments</param>
         public virtual void OnPrimitiveContainerExtend(Widget w, object args)
         {
             int y_pos = DIM_TITLE_HEIGHT;
@@ -185,6 +281,12 @@ namespace WarBotEngine.Editeur
             else
                 this.ExtendPrimitive(0);
         }
+
+
+        /***********************************
+         ****** METHODES D'EVENEMENTS ******
+         ***********************************/
+
 
         public override void OnDrawWithGL()
         {

@@ -19,16 +19,34 @@ namespace WarBotEngine.Editeur
          ***********************/
 
 
+        /// <summary>
+        /// Gestionnaire actuel
+        /// </summary>
         private static MainLayout actual;
 
+        /// <summary>
+        /// Liste des widgets
+        /// </summary>
         private List<Widget> widgets;
 
+        /// <summary>
+        /// Position du curseur de la souris
+        /// </summary>
         private Vector2 mouse_position;
 
+        /// <summary>
+        /// Matériel pour dessiner en OpenGL
+        /// </summary>
         private static Material lineMaterial;
 
+        /// <summary>
+        /// Widget de glissez-déposez
+        /// </summary>
         private DragAndDrop drag_and_drop;
 
+        /// <summary>
+        /// Conteneur supérieur pour les widgets flottants (ex: conteneur interne du sélecteur)
+        /// </summary>
         private Container upper_container;
 
 
@@ -37,6 +55,9 @@ namespace WarBotEngine.Editeur
          ****************************/
 
 
+        /// <summary>
+        /// Canvas dans Unity
+        /// </summary>
         public GameObject MainCanvas;
 
 

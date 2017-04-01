@@ -16,17 +16,45 @@ namespace WarBotEngine.Editeur
          *********************************/
 
 
+        /// <summary>
+        /// Largeur d'une scrollbar
+        /// </summary>
         public static readonly int DIM_WIDTH = 20;
 
+        /// <summary>
+        /// Largeur de trait
+        /// </summary>
         private static readonly int DIM_MARGIN = 2;
+        /// <summary>
+        /// Dimension des triangles
+        /// </summary>
         private static readonly float DIM_TRIANGLE_SIZE = 0.8f;
 
+        /// <summary>
+        /// Couleur 1
+        /// </summary>
         private static readonly Color COLOR_1 = new Color((float)0x07 / 255, (float)0x0f / 255, (float)0x4e / 255);
+        /// <summary>
+        /// Couleur 2
+        /// </summary>
         private static readonly Color COLOR_2 = new Color((float)0x2c / 255, (float)0x3e / 255, (float)0x50 / 255);
+        /// <summary>
+        /// Couleur 3
+        /// </summary>
         private static readonly Color COLOR_3 = new Color((float)0xbd / 255, (float)0xc3 / 255, (float)0xc7 / 255);
+        /// <summary>
+        /// Couleur 4
+        /// </summary>
         private static readonly Color COLOR_4 = new Color((float)0xec / 255, (float)0xf0 / 255, (float)0xf1 / 255);
 
+        /// <summary>
+        /// Vitesse de scrolling en utilisant le bouton de scroll de la souris
+        /// </summary>
         private static readonly float SCROLL_SPEED = 10.0f;
+
+        /// <summary>
+        /// Vitesse de scrolling lors du clic sur les boutons "haut" et "bas"
+        /// </summary>
         private static readonly float SCROLL_CLIC_SPEED = 200.0f;
 
 
@@ -35,24 +63,56 @@ namespace WarBotEngine.Editeur
          ***********************/
 
 
+        /// <summary>
+        /// Hauteur interne
+        /// </summary>
         private float scroll_height;
 
+        /// <summary>
+        /// Valeur actuelle
+        /// </summary>
         private float actual_value = 0;
 
+        /// <summary>
+        /// Evènement appelé lors du changement de la valeur actuelle
+        /// </summary>
         private event EventDelegate on_changevalue;
 
         //ATTRIBUTS D'EVENEMENTS
 
-        private bool is_hover = false, is_clicked = false;
+        /// <summary>
+        /// Indique si le curseur est au-dessus de la scrollbar
+        /// </summary>
+        private bool is_hover = false;
 
+        /// <summary>
+        /// Indique si la scrollbar a été cliquée
+        /// </summary>
+        private bool is_clicked = false;
+
+        /// <summary>
+        /// Position du curseur au moment du clic
+        /// </summary>
         private Vector2 clic_position = new Vector2();
 
+        /// <summary>
+        /// Valeur de la scrollbar au moment du clic
+        /// </summary>
         private float clic_value = 0;
 
+        /// <summary>
+        /// Position actuelle du curseur
+        /// </summary>
         private Vector2 mouse_position = new Vector2();
 
+        /// <summary>
+        /// Indique si le scrolling est en cours
+        /// </summary>
         private bool is_scrolling = false;
 
+        /// <summary>
+        /// Direction du scrolling
+        /// </summary>
         private float scroll_direction = 0f;
 
 

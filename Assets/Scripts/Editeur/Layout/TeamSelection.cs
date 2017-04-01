@@ -5,22 +5,74 @@ using UnityEngine;
 namespace WarBotEngine.Editeur
 {
 
+    /// <summary>
+    /// Menu de sélection des équipes et unités
+    /// </summary>
     public class TeamSelection : Container
     {
 
+
+        /*********************************
+         ****** ATTRIBUTS STATIQUES ******
+         *********************************/
+
+        /// <summary>
+        /// Largeur du menu
+        /// </summary
         public static readonly float DIM_WIDTH = 0.25f;
+        /// <summary>
+        /// Hauteur du menu
+        /// </summary>
         public static readonly float DIM_HEIGHT = 0.25f;
 
+        /// <summary>
+        /// Largeur des sélecteurs
+        /// </summary>
         public static readonly float DIM_SELECTOR_WIDTH = 0.75f;
+        /// <summary>
+        /// Hauteur des sélecteurs
+        /// </summary>
         public static readonly int DIM_SELECTOR_HEIGHT = 30;
 
-        public static readonly float DIM_SELECTOR_DROP_HEIGHT_1 = 0.9f;
-        public static readonly float DIM_SELECTOR_DROP_HEIGHT_2 = 0.5f;
+        /// <summary>
+        /// Hauteur de la liste déroulante du premier sélecteur
+        /// </summary>
+        public static readonly float DIM_SELECTOR_DROP_HEIGHT_1 = 1f;
+        /// <summary>
+        /// Hauteur de la liste déroulante du second sélecteur
+        /// </summary>
+        public static readonly float DIM_SELECTOR_DROP_HEIGHT_2 = 1f;
 
+        /// <summary>
+        /// Couleur de fond
+        /// </summary>
         private static readonly Color BACKGROUND_COLOR = new Color((float)0x73 / 255, (float)0x93 / 255, (float)0xa7 / 255); //#7393a7
 
-        Selector team_selector, unit_selector;
 
+        /***********************
+         ****** ATTRIBUTS ******
+         ***********************/
+
+
+        /// <summary>
+        /// Sélecteur d'équipes
+        /// </summary>
+        private Selector team_selector;
+
+        /// <summary>
+        /// Sélecteur d'unités
+        /// </summary>
+        private Selector unit_selector;
+
+
+        /********************************************
+         ****** METHODES SPECIFIQUES AU WIDGET ******
+         ********************************************/
+
+
+        /// <summary>
+        /// Constructeur de base du menu
+        /// </summary>
         public TeamSelection() : base(new Rect(0, 0, Screen.width * DIM_WIDTH, Screen.height * DIM_HEIGHT))
         {
             this.Background = BACKGROUND_COLOR;
