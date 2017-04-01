@@ -17,18 +17,39 @@ namespace WarBotEngine.Editeur
          ***********************/
 
 
+        /// <summary>
+        /// Texte du label
+        /// </summary>
         protected string text;
 
+        /// <summary>
+        /// Hauteur du texte
+        /// </summary>
         protected int text_size = 14;
 
+        /// <summary>
+        /// Style du texte
+        /// </summary>
         protected FontStyle text_style = FontStyle.Normal;
 
+        /// <summary>
+        /// Alignement du texte
+        /// </summary>
         protected TextAnchor text_align = TextAnchor.MiddleCenter;
 
+        /// <summary>
+        /// Couleur du texte
+        /// </summary>
         protected Color text_color = Color.black;
 
+        /// <summary>
+        /// Couleur du fond
+        /// </summary>
         protected Color background_color = Color.clear;
 
+        /// <summary>
+        /// Taille de la marge
+        /// </summary>
         protected int margin = 0;
 
 

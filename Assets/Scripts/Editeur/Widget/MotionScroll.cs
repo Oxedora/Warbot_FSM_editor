@@ -16,14 +16,32 @@ namespace WarBotEngine.Editeur
          *********************************/
 
 
+        /// <summary>
+        /// Largeur des poignées
+        /// </summary>
         private static readonly float DIM_SIZE = 0.1f;
 
+        /// <summary>
+        /// Couleur lorsqu'il n'y a pas de scrolling
+        /// </summary>
         private static readonly Color COLOR_1 = new Color((float)0x27 / 255, (float)0x72 / 255, (float)0xdb / 255, 0.2f);
+        /// <summary>
+        /// Couleur lorsqu'il y a du scrolling
+        /// </summary>
         private static readonly Color COLOR_2 = new Color((float)0x27 / 255, (float)0x72 / 255, (float)0xdb / 255, 0.5f);
 
+        /// <summary>
+        /// Vitesse du scrolling pour le mouvement de souris
+        /// </summary>
         private static readonly float SCROLL_MOTION_SPEED = 200.0f;
-        private static readonly float SCROLL_MOUSE_SPEED = 3.0f;
+        /// <summary>
+        /// Vitesse du scrolling pour le bouton de scroll de la souris
+        /// </summary>
+        private static readonly float SCROLL_MOUSE_SPEED = 10.0f;
 
+        /// <summary>
+        /// Vitesse maximale du curseur pour que le scrolling s'active
+        /// </summary>
         private static readonly float MOTION_MAX_SPEED = 1f;
 
 
@@ -32,18 +50,36 @@ namespace WarBotEngine.Editeur
          ***********************/
 
 
+        /// <summary>
+        /// Largeur interne du conteneur
+        /// </summary>
         private float scroll_width;
 
+        /// <summary>
+        /// Position actuelle
+        /// </summary>
         private float actual_value = 0;
-
+        
+        /// <summary>
+        /// Evénement appelé lors du changement de la valeur actuelle
+        /// </summary>
         private event EventDelegate on_changevalue;
 
         //ATTRIBUTS D'EVENEMENTS
 
+        /// <summary>
+        /// Indique si le scolling est en court
+        /// </summary>
         private bool is_scrolling = false;
 
+        /// <summary>
+        /// Direction du scrolling
+        /// </summary>
         private float scroll_direction = 0f;
 
+        /// <summary>
+        /// Dernière position du curseur
+        /// </summary>
         private Vector2 last_mouse_pos = new Vector2();
 
 
@@ -197,6 +233,7 @@ namespace WarBotEngine.Editeur
 
         public override void OnScrollEvent(int delta)
         {
+            if (!this.active) return;
             if (Input.GetKey(KeyCode.LeftShift) && this.parent.GlobalArea.Contains(this.last_mouse_pos))
             {
                 this.CurrentValue += delta * MotionScroll.SCROLL_MOUSE_SPEED;

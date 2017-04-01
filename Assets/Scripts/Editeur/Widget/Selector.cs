@@ -19,14 +19,38 @@ namespace WarBotEngine.Editeur
          *********************************/
 
 
+        /// <summary>
+        /// Largeur du trait
+        /// </summary>
         private static readonly int DIM_PADDING = 2;
+        /// <summary>
+        /// Hauteur d'un élément
+        /// </summary>
         private static readonly int DIM_ELEMENT_HEIGHT = 22;
+        /// <summary>
+        /// Taille de la marge d'un élément
+        /// </summary>
         private static readonly int DIM_ELEMENT_MARGIN = 15;
+        /// <summary>
+        /// Dimension du triangle
+        /// </summary>
         private static readonly float DIM_TRIANGLE_SIZE = 0.6f;
 
+        /// <summary>
+        /// Couleur 1
+        /// </summary>
         private static readonly Color COLOR_1 = new Color((float)0x45 / 255, (float)0x3c / 255, (float)0x38 / 255); //453c38
+        /// <summary>
+        /// Couleur 2
+        /// </summary>
         private static readonly Color COLOR_2 = new Color((float)0x6a / 255, (float)0x5c / 255, (float)0x55 / 255); //6a5c55
+        /// <summary>
+        /// Couleur 3
+        /// </summary>
         private static readonly Color COLOR_3 = new Color((float)0xf6 / 255, (float)0x6e / 255, (float)0x00 / 255); //f66e00
+        /// <summary>
+        /// Couleur 4
+        /// </summary>
         private static readonly Color COLOR_CONTAINER_COLOR = new Color((float)0xeb / 255, (float)0xe9 / 255, (float)0xf6 / 255); //ebe9f6
 
 
@@ -35,12 +59,24 @@ namespace WarBotEngine.Editeur
          ***********************/
 
 
+        /// <summary>
+        /// Sélection actuelle
+        /// </summary>
         protected int selection = -1;
 
+        /// <summary>
+        /// Conteneur interne
+        /// </summary>
         protected Container container;
 
+        /// <summary>
+        /// Hauteur du conteneur
+        /// </summary>
         protected int max_height;
 
+        /// <summary>
+        /// Texte sur le sélecteur
+        /// </summary>
         protected Label main_label;
 
 

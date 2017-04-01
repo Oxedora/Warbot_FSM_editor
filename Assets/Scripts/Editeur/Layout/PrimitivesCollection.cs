@@ -5,13 +5,37 @@ using UnityEngine;
 namespace WarBotEngine.Editeur
 {
 
+    /// <summary>
+    /// Liste des primitives
+    /// </summary>
     public class PrimitivesCollection : Container
     {
 
+
+        /*********************************
+         ****** ATTRIBUTS STATIQUES ******
+         *********************************/
+
+
+        /// <summary>
+        /// Hauteur du titre de la liste
+        /// </summary>
         private static readonly int DIM_TITLE_HEIGHT = 50;
 
+        /// <summary>
+        /// Couleur de fond
+        /// </summary>
         private static readonly Color BACKGROUND_COLOR = new Color((float)0xb5 / 255, (float)0xcf / 255, (float)0xd8 / 255); //#b5cfd8
 
+
+        /************************
+         ****** ACCESSEURS ******
+         ************************/
+
+
+        /// <summary>
+        /// Liste des catégories
+        /// </summary>
         public Category[] Categories
         {
             get
@@ -25,6 +49,15 @@ namespace WarBotEngine.Editeur
             }
         }
 
+
+        /********************************************
+         ****** METHODES SPECIFIQUES AU WIDGET ******
+         ********************************************/
+
+
+        /// <summary>
+        /// Constructeur de base de la liste des primitives
+        /// </summary>
         public PrimitivesCollection() : base(new Rect(0, Screen.height * TeamSelection.DIM_HEIGHT, Screen.width * TeamSelection.DIM_WIDTH, Screen.height * (1 - TeamSelection.DIM_HEIGHT)))
         {
             this.AllowScrollbar = true;
@@ -83,6 +116,9 @@ namespace WarBotEngine.Editeur
             this.scrollbar.ScrollHeight = this.childs[this.childs.Count - 1].LocalArea.yMax;
         }
 
+        /// <summary>
+        /// Surcharge de la fonction héritée pour éviter des erreurs
+        /// </summary>
         protected override void RefreshDiplaying()
         {
             foreach (Widget widget in this.childs)

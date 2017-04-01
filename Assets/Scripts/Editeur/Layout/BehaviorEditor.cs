@@ -5,19 +5,58 @@ using UnityEngine;
 namespace WarBotEngine.Editeur
 {
 
+    /// <summary>
+    /// Conteneur de droite d'édition des comportements en glissez-dépossez
+    /// </summary>
     public class BehaviorEditor : Container
     {
 
+
+        /*********************************
+         ****** ATTRIBUTS STATIQUES ******
+         *********************************/
+
+            
+        /// <summary>
+        /// Espace minimum à gauche avant la première primitive
+        /// </summary>
         private static readonly int DIM_MINIMUM_SPACE = 200;
 
+        /// <summary>
+        /// Couleur de fond
+        /// </summary>
         private static readonly Color BACKGROUND_COLOR = new Color((float)0xe8 / 255, (float)0xec / 255, (float)0xf1 / 255); //#e8ecf1
 
+        /// <summary>
+        /// Editeur actuel
+        /// </summary>
         private static BehaviorEditor actual = null;
+        
 
+        /************************
+         ****** ACCESSEURS ******
+         ************************/
+
+
+        /// <summary>
+        /// Editeur actuel
+        /// </summary>
         public static BehaviorEditor Actual { get { return actual; } }
 
+        /// <summary>
+        /// Premier élément de l'éditeur
+        /// </summary>
         public Primitive First { get { return (Primitive)this.childs[0]; } }
 
+
+        /********************************************
+         ****** METHODES SPECIFIQUES AU WIDGET ******
+         ********************************************/
+
+
+        /// <summary>
+        /// Constructeur de base de l'éditeur
+        /// </summary>
         public BehaviorEditor() : base(new Rect(Screen.width * TeamSelection.DIM_WIDTH, 0, Screen.width * (1 - TeamSelection.DIM_WIDTH), Screen.height))
         {
             BehaviorEditor.actual = this;
@@ -30,6 +69,11 @@ namespace WarBotEngine.Editeur
             this.First.ExtendHeight += OnExtendHeight;
         }
 
+        /// <summary>
+        /// Appelé lors de l'extension des éléments dans l'éditeur
+        /// </summary>
+        /// <param name="w">widget</param>
+        /// <param name="args">arguments</param>
         public void OnExtendHeight(Widget w, object args)
         {
             this.inner_width = this.First.TotalWidth + 2 * DIM_MINIMUM_SPACE;
@@ -38,7 +82,16 @@ namespace WarBotEngine.Editeur
             this.scrollbar.ScrollHeight = this.inner_height;
         }
 
+        /// <summary>
+        /// Surcharge de la fonction héritée pour l'empêcher d'exécuter le code parent
+        /// </summary>
         protected override void RefreshDiplaying() {}
+
+
+        /*********************************
+         ****** METHODES DE GESTION ******
+         *********************************/
+
 
         public override void AddChild(Widget widget)
         {

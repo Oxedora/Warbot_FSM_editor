@@ -5,16 +5,65 @@ using UnityEngine;
 namespace WarBotEngine.Editeur
 {
 
+    /// <summary>
+    /// Widget permettant le glissez-déposez
+    /// </summary>
     public class DragAndDrop : Widget
     {
 
+
+        /*********************************
+         ****** ATTRIBUTS STATIQUES ******
+         *********************************/
+
+
+        /// <summary>
+        /// Décalage de la primitive par rapport au curseur lors de la création
+        /// </summary>
         private static readonly Vector2 PRIMITIVE_CURSOR_DEC = new Vector2(Primitive.DIM_WIDTH / 2, Primitive.DIM_TITLE_HEIGHT / 2);
 
+
+        /***********************
+         ****** ATTRIBUTS ******
+         ***********************/
+
+
+        /// <summary>
+        /// Liste des primitives
+        /// </summary>
         private PrimitivesCollection primitives;
+
+        /// <summary>
+        /// Editeur de droite
+        /// </summary>
         private BehaviorEditor editor;
 
-        private Vector2 cursor = new Vector2(), saved_position, saved_cursor;
+        /// <summary>
+        /// Position du curseur actuelle
+        /// </summary>
+        private Vector2 cursor = new Vector2();
 
+        /// <summary>
+        /// Position de la primitive lors du clic
+        /// </summary>
+        private Vector2 saved_position;
+
+        /// <summary>
+        /// Position du curseur lors du clic
+        /// </summary>
+        private Vector2 saved_cursor;
+
+
+        /********************************************
+         ****** METHODES SPECIFIQUES AU WIDGET ******
+         ********************************************/
+
+
+        /// <summary>
+        /// Constructeur de base du glissez-déposez
+        /// </summary>
+        /// <param name="primitives">liste des primitives</param>
+        /// <param name="editor">éditeur de droite</param>
         public DragAndDrop(PrimitivesCollection primitives, BehaviorEditor editor)
         {
             this.LocalArea = new Rect(0, 0, Screen.width, Screen.height);
@@ -26,12 +75,23 @@ namespace WarBotEngine.Editeur
             }
         }
 
+        /// <summary>
+        /// Appelée lors de la sélection d'une primitive dans la liste
+        /// </summary>
+        /// <param name="widget">widget</param>
+        /// <param name="args">nom de la primitive</param>
         private void OnSelectItem(Widget widget, object args)
         {
             this.AddChild(new Primitive(cursor - PRIMITIVE_CURSOR_DEC, (string)args));
             this.saved_position = this.childs[0].GlobalPosition;
             this.saved_cursor = cursor;
         }
+
+
+        /***********************************
+         ****** METHODES D'EVENEMENTS ******
+         ***********************************/
+
 
         public override void OnMouseEvent(int button, bool pressed, int x, int y)
         {
