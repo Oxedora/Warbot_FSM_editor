@@ -48,14 +48,6 @@ namespace WarBotEngine.Editeur
                 this.ExtendPrimitive(0);
         }
 
-        public override void OnMouseEvent(int button, bool pressed, int x, int y)
-        {
-            if (!this.Active) return;
-            base.OnMouseEvent(button, pressed, x, y);
-            this.is_clicked = false;
-            this.Next = null;
-        }
-
     }
 
 }

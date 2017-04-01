@@ -26,7 +26,8 @@ namespace WarBotEngine.Editeur
         private static readonly Color COLOR_3 = new Color((float)0xbd / 255, (float)0xc3 / 255, (float)0xc7 / 255);
         private static readonly Color COLOR_4 = new Color((float)0xec / 255, (float)0xf0 / 255, (float)0xf1 / 255);
 
-        private static readonly float SCROLL_SPEED = 200.0f;
+        private static readonly float SCROLL_SPEED = 10.0f;
+        private static readonly float SCROLL_CLIC_SPEED = 200.0f;
 
 
         /***********************
@@ -133,7 +134,7 @@ namespace WarBotEngine.Editeur
             base.OnUpdate();
             if (this.is_scrolling)
             {
-                this.CurrentValue += this.scroll_direction * Scrollbar.SCROLL_SPEED * Time.deltaTime;
+                this.CurrentValue += this.scroll_direction * Scrollbar.SCROLL_CLIC_SPEED * Time.deltaTime;
             }
         }
 
@@ -239,7 +240,7 @@ namespace WarBotEngine.Editeur
                     zone.height = zone.width;
                     if (zone.Contains(new Vector2(x, y)))
                     {
-                        this.CurrentValue -= Scrollbar.SCROLL_SPEED * Time.deltaTime;
+                        this.CurrentValue -= Scrollbar.SCROLL_CLIC_SPEED * Time.deltaTime;
                         this.scroll_direction = -1f;
                         this.is_scrolling = true;
                     }
@@ -248,7 +249,7 @@ namespace WarBotEngine.Editeur
                     zone.height = zone.width;
                     if (zone.Contains(new Vector2(x, y)))
                     {
-                        this.CurrentValue += Scrollbar.SCROLL_SPEED * Time.deltaTime;
+                        this.CurrentValue += Scrollbar.SCROLL_CLIC_SPEED * Time.deltaTime;
                         this.scroll_direction = 1f;
                         this.is_scrolling = true;
                     }
