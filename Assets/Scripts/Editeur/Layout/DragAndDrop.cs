@@ -53,6 +53,20 @@ namespace WarBotEngine.Editeur
         /// </summary>
         private Vector2 saved_cursor;
 
+		/**********************
+		 ***** ACCESSEURS *****
+		 **********************/
+
+		public PrimitivesCollection Primitives_collection {
+			get{ return this.primitives; } 
+			set {
+				this.primitives = value; 
+				foreach (Category ca in primitives.Categories) {
+					ca.SelectItem += OnSelectItem;
+				} 
+			}
+		}
+		public BehaviorEditor Editor {	get{return this.editor;} set{this.editor = value;} }
 
         /********************************************
          ****** METHODES SPECIFIQUES AU WIDGET ******
@@ -82,6 +96,7 @@ namespace WarBotEngine.Editeur
         /// <param name="args">nom de la primitive</param>
         private void OnSelectItem(Widget widget, object args)
         {
+			Debug.Log ((string)args + " selected");
             this.AddChild(new Primitive(cursor - PRIMITIVE_CURSOR_DEC, (string)args));
             this.saved_position = this.childs[0].GlobalPosition;
             this.saved_cursor = cursor;
