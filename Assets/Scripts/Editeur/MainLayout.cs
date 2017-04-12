@@ -24,10 +24,25 @@ namespace WarBotEngine.Editeur
         /// </summary>
         private static MainLayout actual;
 
-        /// <summary>
-        /// Liste des widgets
-        /// </summary>
-        private List<Widget> widgets;
+		/// <summary>
+		/// La liste de tous les widgets
+		/// </summary>
+		private List<Widget> widgets;
+
+		/// <summary>
+		/// La zone de drage and drop contenant la fsm.
+		/// </summary>
+		private BehaviorEditor editor;
+
+		/// <summary>
+		/// La liste des categories de primitives.
+		/// </summary>
+		private PrimitivesCollection primitivesCollection;
+
+		/// <summary>
+		/// Le selecteur d'équipes et d'unités.
+		/// </summary>
+		private TeamSelection teamSelection;
 
         /// <summary>
         /// Position du curseur de la souris
@@ -86,6 +101,21 @@ namespace WarBotEngine.Editeur
         /// </summary>
         public Widget UpperContainer { get { return this.upper_container; } }
 
+		public BehaviorEditor Editor{ get { return this.editor; } }
+
+		public PrimitivesCollection Primitives_collection{ 
+			get { return this.primitivesCollection; } 
+			set{
+				this.RemoveWidget (this.primitivesCollection);
+				this.primitivesCollection = value;
+				this.AddWidget (this.primitivesCollection);
+				this.RemoveWidget (this.drag_and_drop);
+				this.drag_and_drop.Primitives_collection = this.primitivesCollection;
+				this.AddWidget (this.drag_and_drop);
+			} 
+		}
+
+		public TeamSelection Team_selection{ get { return this.teamSelection; } }
 
         /****************************
          ****** APPELS D'UNITY ******
@@ -98,15 +128,18 @@ namespace WarBotEngine.Editeur
         void Start()
         {
             MainLayout.actual = this;
-            widgets = new List<Widget>();
             mouse_position = new Vector2();
+			widgets = new List<Widget> ();
             this.upper_container = new Container(new Rect(0, 0, Screen.width, Screen.height));
 
-            this.AddWidget(new BehaviorEditor());
-            this.AddWidget(new PrimitivesCollection());
-            this.AddWidget(new TeamSelection());
+			this.editor = new BehaviorEditor();
+			this.teamSelection = new TeamSelection(actual);
+			this.primitivesCollection = new PrimitivesCollection(this.teamSelection.Unit_selector.Selection);
+			this.AddWidget (editor);
+			this.AddWidget (primitivesCollection);
+			this.AddWidget (teamSelection);
 
-            this.drag_and_drop = new DragAndDrop((PrimitivesCollection)this.widgets[1], (BehaviorEditor)this.widgets[0]);
+			this.drag_and_drop = new DragAndDrop(primitivesCollection, editor);
             this.AddWidget(this.drag_and_drop);
             this.AddWidget(this.upper_container);
         }
@@ -252,10 +285,11 @@ namespace WarBotEngine.Editeur
             CreateLineMaterial();
             lineMaterial.SetPass(0);
             this.PushGL();
-            foreach (Widget o in widgets)
-            {
-                o.OnDraw();
-            }
+			this.editor.OnDraw();
+			this.primitivesCollection.OnDraw();
+			this.teamSelection.OnDraw();
+			this.drag_and_drop.OnDraw ();
+			this.upper_container.OnDraw ();
             this.PopGL();
         }
 
