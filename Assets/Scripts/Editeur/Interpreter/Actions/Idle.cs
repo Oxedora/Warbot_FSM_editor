@@ -10,8 +10,6 @@ namespace Assets.Scripts.Editeur.Interpreter.Actions
     {
         public Idle()
         {
-            this.setStartAttribute("<idle>");
-            this.setEndAttribute("</idle>");
         }
 
         public override bool execute(Unit u)

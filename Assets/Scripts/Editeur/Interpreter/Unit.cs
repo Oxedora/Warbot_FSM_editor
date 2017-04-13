@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Assets.Scripts.Editeur.Interpreter.Actions;
 
 namespace Assets.Scripts.Editeur.Interpreter
 {
@@ -9,7 +10,12 @@ namespace Assets.Scripts.Editeur.Interpreter
 	{
         private List<Instruction> behavior;
 		private string a;
-		Unit(string b) { a = b; }
+
+		public Unit(string b) {
+            a = b;
+            behavior = new List<Instruction>();
+            behavior.Add(new Idle());
+        }
 
 		public void pickFood()
 		{
@@ -29,6 +35,13 @@ namespace Assets.Scripts.Editeur.Interpreter
         public void idle()
         {
             Console.WriteLine("je glande");
+        }
+
+        public bool isBagEmpty()
+        {
+            Console.WriteLine("j'ai rien à manger D:");
+
+            return true;
         }
 
         public void run()

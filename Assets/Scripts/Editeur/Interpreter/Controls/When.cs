@@ -22,6 +22,8 @@ namespace Assets.Scripts.Editeur.Interpreter
 	{
         public When()
         {
+            setConditions(new List<Condition>());
+            setActions(new List<Action>());
         }
 
 		public When(List<Condition> c, List<Action> a)
@@ -78,7 +80,7 @@ namespace Assets.Scripts.Editeur.Interpreter
                 XmlNode paramNode = doc.CreateElement("parameters");
                 foreach(Condition c in getConditions())
                 {
-                    paramNode.AppendChild(c.xmlStructure());
+                    paramNode.AppendChild(doc.ImportNode(c.xmlStructure(), true));
                 }
                 whenNode.AppendChild(paramNode);
             }
@@ -87,7 +89,7 @@ namespace Assets.Scripts.Editeur.Interpreter
                 XmlNode actNode = doc.CreateElement("actions");
                 foreach (Action a in getActions())
                 {
-                    actNode.AppendChild(a.xmlStructure());
+                    actNode.AppendChild(doc.ImportNode(a.xmlStructure(), true));
                 }
                 whenNode.AppendChild(actNode);
             }

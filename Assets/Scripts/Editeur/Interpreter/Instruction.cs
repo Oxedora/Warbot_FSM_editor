@@ -25,8 +25,5 @@ namespace Assets.Scripts.Editeur.Interpreter
 
         // Returns the instruction xml structure
         public abstract XmlNode xmlStructure();
-
-
-        
     }
 }

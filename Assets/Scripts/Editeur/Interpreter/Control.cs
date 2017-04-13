@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using System.Collections.Generic;
 
 namespace Assets.Scripts.Editeur.Interpreter
 {
@@ -28,6 +25,8 @@ namespace Assets.Scripts.Editeur.Interpreter
         // Setters
         public void setConditions(List<Condition> c) { conditions = c; }
 		public void setActions(List<Action> a) { actions = a; }
+        public void addCondition(Condition c) { conditions.Add(c); }
+        public void addAction(Action a) { actions.Add(a); }
     }
 
 }
