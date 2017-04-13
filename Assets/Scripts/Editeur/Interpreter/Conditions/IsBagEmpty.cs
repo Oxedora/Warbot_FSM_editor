@@ -1,8 +1,12 @@
-﻿using System.Xml;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Xml;
 
 namespace Assets.Scripts.Editeur.Interpreter
 {
-	/**
+    /**
 	 * @Author : Celia Rouquairol
 	 * 
 	 * @Project : Warbot Unity version : FSM design & implementation
@@ -16,15 +20,15 @@ namespace Assets.Scripts.Editeur.Interpreter
 	 * Calls the corresponding action of the unit
 	 * What is "Condition" in the design pattern is classical method for the unit
 	 **/
-	public abstract class Condition : Instruction
-	{
-        public override XmlNode xmlStructure()
+    public class IsBagEmpty : Condition
+    {
+        public IsBagEmpty()
         {
-            XmlDocument doc = new XmlDocument();
+        }
 
-            XmlNode node = doc.CreateElement(this.GetType().Name);
-
-            return node;
+        public override bool execute(Unit u)
+        {
+            return u.isBagEmpty();
         }
     }
 }
