@@ -89,6 +89,7 @@ namespace WarBotEngine.Editeur
          ****** ACCESSEURS ******
          ************************/
 
+		public int EmplacementSelection{get{ return this.selection; }}
 
         /// <summary>
         /// Liste des éléments du sélecteur
@@ -204,8 +205,10 @@ namespace WarBotEngine.Editeur
         protected void OnSelect(Widget widget, int button, int x, int y)
         {
             this.Selection = ((Label)widget).Text;
-            if (this.SelectItem != null)
-                SelectItem(this, this.Selection);
+			if (this.SelectItem != null) {
+				string args = this.Selection;
+				SelectItem (this, args);
+			}
         }
 
         /// <summary>

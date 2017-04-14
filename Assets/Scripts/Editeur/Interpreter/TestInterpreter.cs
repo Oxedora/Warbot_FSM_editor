@@ -5,8 +5,6 @@ using System.Text;
 using System.Xml;
 using System.IO;
 using Assets.Scripts.Editeur.Interpreter;
-using Assets.Scripts.Editeur.Interpreter.Actions;
-using WarBotEngine.Editeur.Interpreter;
 using System.Reflection;
 using UnityEngine;
 using WarBotEngine.Editeur;

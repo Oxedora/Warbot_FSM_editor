@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
-namespace Assets.Scripts.Editeur.Interpreter.Actions
+namespace Assets.Scripts.Editeur.Interpreter
 {
     class Idle : Action
     {

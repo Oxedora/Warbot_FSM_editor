@@ -65,7 +65,7 @@ namespace WarBotEngine.Editeur
             this.AllowMotionScroll = true;
             this.Background = BACKGROUND_COLOR;
 
-            this.AddChild(new Primitive(new Vector2(DIM_MINIMUM_SPACE, 0), Primitive.NAME_PRIMITIVE_BEGIN));
+			this.AddChild(new Primitive(new Vector2(DIM_MINIMUM_SPACE, 0), Primitive.NAME_PRIMITIVE_BEGIN, null));
             this.First.ExtendHeight += OnExtendHeight;
         }
 
