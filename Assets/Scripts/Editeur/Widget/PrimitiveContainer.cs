@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets.Scripts.Editeur.Interpreter;
 
 namespace WarBotEngine.Editeur
 {
@@ -74,7 +75,7 @@ namespace WarBotEngine.Editeur
             this.container = new Container(new Rect(0, this.area.height, this.area.width, DIM_TITLE_HEIGHT + DIM_MINIMUM_SPACE));
 
             this.AddChild(this.container);
-            Primitive begin = new Primitive(new Vector2(0, 0), Primitive.NAME_PRIMITIVE_BEGIN);
+            Primitive begin = new Primitive(new Vector2(0, 0), Primitive.NAME_PRIMITIVE_BEGIN, null);
             this.container.AddChild(begin);
             begin.ExtendHeight += OnInnerExtend;
 
@@ -90,7 +91,10 @@ namespace WarBotEngine.Editeur
         /// <param name="cursor">position du curseur</param>
         public override void PushPrimitive(Primitive primitive, Vector2 cursor)
         {
-            this.First.PushPrimitive(primitive, cursor);
+			Debug.Log("Tentative de placer "+primitive.Instruction.ToString());
+			if(this.inner_container && primitive.Instruction is Condition
+				|| !this.inner_container && primitive.Instruction is Action)
+            	this.First.PushPrimitive(primitive, cursor);
         }
 
         /// <summary>

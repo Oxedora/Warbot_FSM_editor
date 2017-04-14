@@ -5,7 +5,6 @@ using System.Xml;
 using System.IO;
 using UnityEngine.UI;
 using Assets.Scripts.Editeur.Interpreter;
-using Assets.Scripts.Editeur.Interpreter.Actions;
 
 namespace WarBotEngine.Editeur
 {

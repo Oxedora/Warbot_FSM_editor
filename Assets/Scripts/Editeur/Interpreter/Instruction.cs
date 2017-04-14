@@ -25,5 +25,10 @@ namespace Assets.Scripts.Editeur.Interpreter
 
         // Returns the instruction xml structure
         public abstract XmlNode xmlStructure();
+
+		public string Type()
+		{
+			return this.GetType ().Name;
+		}
     }
 }

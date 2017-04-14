@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets.Scripts.Editeur.Interpreter;
 
 namespace WarBotEngine.Editeur
 {
@@ -71,6 +72,11 @@ namespace WarBotEngine.Editeur
         /// Primitive suivante
         /// </summary>
         protected Primitive next = null;
+
+		/// <summary>
+		/// The instruction.
+		/// </summary>
+		protected Instruction instruction = null;
 
 
         /************************************
@@ -171,6 +177,9 @@ namespace WarBotEngine.Editeur
             }
         }
 
+		public Label Title{get{ return title;} set{this.title = value;}}
+
+		public Instruction Instruction{ get{ return this.instruction;} set{ this.instruction = value;}}
 
         /********************************************
          ****** METHODES SPECIFIQUES AU WIDGET ******
@@ -187,16 +196,17 @@ namespace WarBotEngine.Editeur
         /// </summary>
         /// <param name="position">position de la primitive</param>
         /// <param name="name">nom de la primitive</param>
-        public Primitive(Vector2 position, string name)
+		public Primitive(Vector2 position, string name, Instruction instruction)
         {
+			this.instruction = instruction;
             if (name == NAME_PRIMITIVE_BEGIN)
                 this.LocalArea = new Rect(position.x, position.y, DIM_WIDTH, DIM_TITLE_HEIGHT);
-            else if (name == "SI ALORS.. SINON..")
+			else if (instruction.GetType().Equals(typeof(When)))
             {
                 this.LocalArea = new Rect(position.x, position.y, DIM_WIDTH, 200);
                 this.inner.Add(new PrimitiveContainer(new Vector2(this.area.width, 0), "CONDITION", this, true));
                 this.outer.Add(new PrimitiveContainer(new Vector2(this.area.width, 0), "ALORS", this, false));
-                this.outer.Add(new PrimitiveContainer(new Vector2(this.area.width, 0), "SINON", this, false));
+                //this.outer.Add(new PrimitiveContainer(new Vector2(this.area.width, 0), "SINON", this, false));
             }
             else {
                 this.LocalArea = new Rect(position.x, position.y, DIM_WIDTH, 100);

@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using System;
+using Assets.Scripts.Editeur.Interpreter;
 
 namespace WarBotEngine.Editeur
 {
@@ -94,10 +97,31 @@ namespace WarBotEngine.Editeur
         /// </summary>
         /// <param name="widget">widget</param>
         /// <param name="args">nom de la primitive</param>
-        private void OnSelectItem(Widget widget, object args)
+		private void OnSelectItem(Widget widget, object args)
         {
-			Debug.Log ((string)args + " selected");
-            this.AddChild(new Primitive(cursor - PRIMITIVE_CURSOR_DEC, (string)args));
+			// Identification de la catégorie
+			Category[] cats = this.primitives.Categories;
+			string label = (string)args;
+			Instruction instruction;
+
+			int categorySelected = -1;
+			int categorySelection = -1;
+			foreach (Category c in cats) {
+				categorySelected++;
+				if (c.Selection == label) {
+					categorySelection = c.EmplacementSelection; 
+					break;
+				}
+			}
+
+			if (categorySelected != -1) 
+				instruction = this.primitives.InstructionSelected (categorySelected, categorySelection);
+			else
+				instruction = null;
+
+			Debug.Log ("Primitive sélectionnée : "+instruction.Type());
+
+			this.AddChild(new Primitive(cursor - PRIMITIVE_CURSOR_DEC, label, instruction));
             this.saved_position = this.childs[0].GlobalPosition;
             this.saved_cursor = cursor;
         }

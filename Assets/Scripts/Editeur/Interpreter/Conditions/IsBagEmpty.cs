@@ -30,5 +30,6 @@ namespace Assets.Scripts.Editeur.Interpreter
         {
             return u.isBagEmpty();
         }
+
     }
 }

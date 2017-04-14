@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets.Scripts.Editeur.Interpreter;
 
 namespace WarBotEngine.Editeur
 {
@@ -33,7 +34,13 @@ namespace WarBotEngine.Editeur
 		/// <summary>
 		/// Liste des primitives auquel a accès chaque unité.
 		/// </summary>
-		private List<Primitive>[][] primitivesByUnits;
+		private List<Instruction>[][] instructionsByUnits;
+
+		/// <summary>
+		/// The selected unit.
+		/// </summary>
+		private int selectedUnit = 0;
+
 
 		/************************
 	         ****** ACCESSEURS ******
@@ -53,6 +60,15 @@ namespace WarBotEngine.Editeur
 			}
 		}
 
+		public Instruction InstructionSelected(int category, int selection)
+		{
+			int cpt = 0;
+			foreach (Instruction i in instructionsByUnits[selectedUnit][category]) {
+				if (cpt == selection)
+					return i;
+			}
+			return null;
+		}
 
 		/********************************************
 	         ****** METHODES SPECIFIQUES AU WIDGET ******
@@ -67,29 +83,28 @@ namespace WarBotEngine.Editeur
 			this.AllowScrollbar = true;
 			this.Background = BACKGROUND_COLOR;
 
-			primitivesByUnits = new List<Primitive>[nbUnits][];
+			instructionsByUnits = new List<Instruction>[nbUnits][];
 			for (int i = 0; i < nbUnits; i++) {
-				primitivesByUnits [i] = new List<Primitive>[3];
+				instructionsByUnits [i] = new List<Instruction>[3];
 			}
 
-			List<Primitive> Control = new List<Primitive> ();
-			Control.Add (new Primitive (new Vector2(), "when"));
-			List<Primitive> Condition = new List<Primitive> ();
-			Condition.Add (new Primitive (new Vector2(), "isBagEmpty"));
-			List<Primitive> Action = new List<Primitive> ();
-			Action.Add (new Primitive (new Vector2(), "move"));
+			List<Instruction> Control = new List<Instruction> ();
+			Control.Add (new When());
+			List<Instruction> Condition = new List<Instruction> ();
+			Condition.Add (new IsBagEmpty());
+			List<Instruction> Action = new List<Instruction> ();
+			Action.Add (new Move());
 
-			primitivesByUnits [0] [0] = Control;
-			primitivesByUnits [1] [0] = Control;
-			primitivesByUnits [0] [1] = Condition;
-			primitivesByUnits [1] [1] = Control;
-			primitivesByUnits [0] [2] = Action;
-			primitivesByUnits [1] [2] = Control;
+			instructionsByUnits [0] [0] = Control;
+			instructionsByUnits [1] [0] = Control;
+			instructionsByUnits [0] [1] = Condition;
+			instructionsByUnits [1] [1] = Control;
+			instructionsByUnits [0] [2] = Action;
+			instructionsByUnits [1] [2] = Control;
 
 			this.AddChild (new Label (new Rect (0, 0, this.area.width, DIM_TITLE_HEIGHT), "Primitives pour " + unitName));
 
 			// Récupération de la place de l'unité dans le tableau.
-			int selectedUnit = 0;
 			switch (unitName) {
 			case "Unité 1":
 				selectedUnit = 0;
@@ -107,10 +122,10 @@ namespace WarBotEngine.Editeur
 			//Ajout de la list des controles
 			Category category = new Category ("Control", new Vector2 (0, DIM_TITLE_HEIGHT), (int)this.area.width - Scrollbar.DIM_WIDTH);
 			category.Resize += OnCategoryResize;
-			string[] Elements = new string[primitivesByUnits [selectedUnit] [0].Count];
+			string[] Elements = new string[instructionsByUnits [selectedUnit] [0].Count];
 			int cpt = 0;
-			foreach (Primitive p in primitivesByUnits [selectedUnit] [0]) {
-				Elements [cpt] = p.Title.Text;
+			foreach (Instruction i in instructionsByUnits [selectedUnit] [0]) {
+				Elements [cpt] = i.GetType().Name;
 				cpt++;
 			}
 			category.Elements = Elements;
@@ -119,10 +134,10 @@ namespace WarBotEngine.Editeur
 			//Ajout de la liste des conditions
 			category = new Category ("Condition", new Vector2 (0, DIM_TITLE_HEIGHT + Category.DIM_ELEMENT_HEIGHT), (int)this.area.width - Scrollbar.DIM_WIDTH);
 			category.Resize += OnCategoryResize;
-			Elements = new string[primitivesByUnits [selectedUnit] [1].Count];
+			Elements = new string[instructionsByUnits [selectedUnit] [1].Count];
 			cpt = 0;
-			foreach (Primitive p in primitivesByUnits [selectedUnit] [1]) {
-				Elements [cpt] = p.Title.Text;
+			foreach (Instruction i in instructionsByUnits [selectedUnit] [1]) {
+				Elements [cpt] = i.GetType().Name;
 				cpt++;
 			}
 			category.Elements = Elements;
@@ -131,49 +146,16 @@ namespace WarBotEngine.Editeur
 			//Ajout de la liste des actions
 			category = new Category ("Action", new Vector2 (0, DIM_TITLE_HEIGHT + Category.DIM_ELEMENT_HEIGHT*2), (int)this.area.width - Scrollbar.DIM_WIDTH);
 			category.Resize += OnCategoryResize;
-			Elements = new string[primitivesByUnits [selectedUnit] [2].Count];
+			Elements = new string[instructionsByUnits [selectedUnit] [2].Count];
 			cpt = 0;
-			foreach (Primitive p in primitivesByUnits [selectedUnit] [2]) {
-				Elements [cpt] = p.Title.Text;
+			foreach (Instruction i in instructionsByUnits [selectedUnit] [2]) {
+				Elements [cpt] = i.GetType().Name;
 				cpt++;
 			}
 			category.Elements = Elements;
 			this.AddChild (category);
 
-			//A supprimer
-			//			Category category = new Category("Catégorie 1", new Vector2(0, DIM_TITLE_HEIGHT), (int)this.area.width - Scrollbar.DIM_WIDTH);
-			//            category.Resize += OnCategoryResize;
-			//            category.Elements = new string[]
-			//            {
-			//                "SI ALORS.. SINON..",
-			//                "Primitive 2",
-			//                "Primitive 3",
-			//                "Primitive 4",
-			//                "Primitive 5",
-			//                "Primitive 6",
-			//                "Primitive 7",
-			//                "Primitive 8",
-			//                "Primitive 9",
-			//                "Primitive 10",
-			//                "Primitive 11",
-			//                "Primitive 12",
-			//                "Primitive 13",
-			//                "Primitive 14"
-			//            };
-			//            this.AddChild(category);
-			//
-			//            category = new Category("Catégorie 2", new Vector2(0, DIM_TITLE_HEIGHT + Category.DIM_ELEMENT_HEIGHT), (int)this.area.width - Scrollbar.DIM_WIDTH);
-			//            category.Resize += OnCategoryResize;
-			//            category.Elements = new string[]
-			//            {
-			//                "Primitive 1",
-			//                "Primitive 2",
-			//                "Primitive 3",
-			//                "Primitive 4",
-			//                "Primitive 5",
-			//                "Primitive 6"
-			//            };
-			//            this.AddChild(category);
+
 		}
 
 		/// <summary>
