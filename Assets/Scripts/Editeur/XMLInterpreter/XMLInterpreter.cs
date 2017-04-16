@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Xml;
 using System.IO;
-using UnityEngine.UI;
-using Assets.Scripts.Editeur.Interpreter;
 
 namespace WarBotEngine.Editeur
 {
@@ -14,23 +11,29 @@ namespace WarBotEngine.Editeur
         {
         }
 
+        /**
+         * Generate a xml file containing only the given team name and saved to the given path
+         */
         public void generateEmptyFile(string teamName, string path)
         {
             // Creating new xml document
             XmlDocument doc = new XmlDocument();
 
             // Creating root node
-            XmlNode root = doc.CreateElement("Behavior");
+            XmlNode root = doc.CreateElement(Constants.nodeContainer);
             doc.AppendChild(root);
 
             // Appending team name
-            XmlNode node = doc.CreateElement("teamName");
+            XmlNode node = doc.CreateElement(Constants.nodeTeam);
             node.InnerText = teamName;
             root.AppendChild(node);
 
-            doc.Save(path + "/" + teamName + ".xml");
+            doc.Save(path + "/" + teamName + Constants.xmlExtension);
         }
 
+        /**
+         * Returns the instruction corresponding to the given xmlnode
+         */
         public Instruction whichInstruction(XmlNode ins)
         {
             switch (ins.Name)
@@ -72,7 +75,7 @@ namespace WarBotEngine.Editeur
             string fileName = "";
             foreach (string file in Directory.GetFiles(path))
             {
-                if (file.Contains(".xml"))
+                if (file.Contains(Constants.xmlExtension))
                 {
                     Debug.Log(file);
                     using (var stream = new FileStream(file, FileMode.Open))
@@ -80,7 +83,7 @@ namespace WarBotEngine.Editeur
                         if (stream.CanRead)
                         {
                             Load(stream);
-                            XmlNode team = SelectSingleNode("//teamName");
+                            XmlNode team = SelectSingleNode("//" + Constants.nodeTeam);
                             if (team.InnerText != null && team.InnerText.Equals(teamName))
                             {
                                 fileName = file;
@@ -112,7 +115,7 @@ namespace WarBotEngine.Editeur
             using (var stream = new FileStream(fileName, FileMode.Open))
             {
                 Load(stream);
-                XmlNodeList units = GetElementsByTagName("unit");
+                XmlNodeList units = GetElementsByTagName(Constants.nodeUnit);
                 for(int i = 0; i < units.Count; i++)
                 {
                     string unitName = units.Item(i).Attributes.Item(0).Name;
@@ -137,10 +140,13 @@ namespace WarBotEngine.Editeur
             {
                 Load(stream);
                 // select the node containing the unit name
-                XmlNode unitBehavior = SelectSingleNode("//unit[@name='" + unitName + "']");
-                foreach(XmlNode ins in unitBehavior.ChildNodes)
+                XmlNode unitBehavior = SelectSingleNode("//" + Constants.nodeUnit + "[@" + Constants.attributeName + "='" + unitName + "']");
+                if (unitBehavior != null && unitBehavior.HasChildNodes)
                 {
-                    behavior.Add(whichInstruction(ins));
+                    foreach (XmlNode ins in unitBehavior.ChildNodes)
+                    {
+                        behavior.Add(whichInstruction(ins));
+                    }
                 }
             }
             return behavior;
@@ -154,7 +160,7 @@ namespace WarBotEngine.Editeur
             // If no file has been found, create a new one with the given team name
             if (fileName.Equals(""))
             {
-                fileName = teamName + ".xml";
+                fileName = teamName + Constants.xmlExtension;
                 generateEmptyFile(teamName, path);
             }
 
@@ -162,15 +168,15 @@ namespace WarBotEngine.Editeur
             Load(path + "/" + fileName);
 
             // Get all nodes named "unit"
-            XmlNode node = SelectSingleNode("//unit[@name='" + unitName + "']");
+            XmlNode node = SelectSingleNode("//" + Constants.nodeUnit + "[@" + Constants.attributeName + "='" + unitName + "']");
             if(node == null)
             {
-                node = CreateElement("unit");
+                node = CreateElement(Constants.nodeUnit);
             }
             Debug.Log(node.OuterXml);
             node.RemoveAll();
 
-            XmlAttribute name = CreateAttribute("name");
+            XmlAttribute name = CreateAttribute(Constants.attributeName);
             name.Value = unitName;
             node.Attributes.Append(name);
 
@@ -183,6 +189,32 @@ namespace WarBotEngine.Editeur
             embbed.AppendChild(node);
 
             Save(path + "/" + fileName);
+        }
+
+        public List<string> allTeamsInXmlFiles(string path)
+        {
+            List<string> teams = new List<string>();
+
+            foreach (string file in Directory.GetFiles(path))
+            {
+                if (file.Contains(Constants.xmlExtension))
+                {
+                    using (var stream = new FileStream(file, FileMode.Open))
+                    {
+                        if (stream.CanRead)
+                        {
+                            Load(stream);
+                            XmlNode team = SelectSingleNode("//" + Constants.nodeTeam);
+                            if (team.InnerText != null)
+                            {
+                                teams.Add(team.InnerText);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return teams;
         }
 
     }

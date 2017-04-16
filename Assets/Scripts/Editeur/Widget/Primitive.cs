@@ -203,9 +203,25 @@ namespace WarBotEngine.Editeur
                 this.LocalArea = new Rect(position.x, position.y, DIM_WIDTH, DIM_TITLE_HEIGHT);
 			else if (instruction.GetType().Equals(typeof(When)))
             {
+                When w = (When)instruction;
+
                 this.LocalArea = new Rect(position.x, position.y, DIM_WIDTH, 200);
-                this.inner.Add(new PrimitiveContainer(new Vector2(this.area.width, 0), "CONDITION", this, true));
-                this.outer.Add(new PrimitiveContainer(new Vector2(this.area.width, 0), "ALORS", this, false));
+                PrimitiveContainer pcInner = (new PrimitiveContainer(new Vector2(this.area.width, 0), "CONDITION", this, true));
+
+                for(int i = w.getConditions().Count-1; i > -1; i--)
+                {
+                    Primitive p = new Primitive(new Vector2(), w.getConditions()[i].Type(), w.getConditions()[i]);
+                    pcInner.PushPrimitive(p, pcInner.First.GlobalPosition);
+                }
+                this.inner.Add(pcInner);
+
+                PrimitiveContainer pcOuter = (new PrimitiveContainer(new Vector2(this.area.width, 0), "ALORS", this, false));
+                for (int i = w.getActions().Count - 1; i > -1; i--)
+                {
+                    Primitive p = new Primitive(new Vector2(), w.getActions()[i].Type(), w.getActions()[i]);
+                    pcOuter.PushPrimitive(p, pcOuter.First.GlobalPosition);
+                }
+                this.outer.Add(pcOuter);
                 //this.outer.Add(new PrimitiveContainer(new Vector2(this.area.width, 0), "SINON", this, false));
             }
             else {

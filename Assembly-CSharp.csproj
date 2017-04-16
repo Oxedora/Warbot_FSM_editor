@@ -39,13 +39,29 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="UnityEngine">
-      <HintPath>D:/Programmes/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+      <HintPath>D:/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
-      <HintPath>D:/Programmes/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+      <HintPath>D:/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Editeur\Constants.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Interpreter\Action.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Interpreter\Actions\Idle.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Interpreter\Actions\Message.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Interpreter\Actions\Move.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Interpreter\Actions\Percept.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Interpreter\Actions\Shoot.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Interpreter\Condition.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Interpreter\Conditions\IsBagEmpty.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Interpreter\Control.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Interpreter\Controls\When.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Interpreter\Instruction.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Interpreter\Main.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Interpreter\NewBehaviourScript.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Interpreter\TestInterpreter.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Interpreter\Unit.cs" />
      <Compile Include="Assets\Scripts\Editeur\Layout\BehaviorEditor.cs" />
      <Compile Include="Assets\Scripts\Editeur\Layout\DragAndDrop.cs" />
      <Compile Include="Assets\Scripts\Editeur\Layout\PrimitivesCollection.cs" />
@@ -58,25 +74,27 @@
      <Compile Include="Assets\Scripts\Editeur\Widget\MotionScroll.cs" />
      <Compile Include="Assets\Scripts\Editeur\Widget\Primitive.cs" />
      <Compile Include="Assets\Scripts\Editeur\Widget\PrimitiveContainer.cs" />
+     <Compile Include="Assets\Scripts\Editeur\Widget\PrimitiveSelector.cs" />
      <Compile Include="Assets\Scripts\Editeur\Widget\Scrollbar.cs" />
      <Compile Include="Assets\Scripts\Editeur\Widget\Selector.cs" />
+     <Compile Include="Assets\Scripts\Editeur\XMLInterpreter\XMLInterpreter.cs" />
  <Reference Include="UnityEngine.UI">
- <HintPath>D:/Programmes/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ <HintPath>D:/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Networking">
- <HintPath>D:/Programmes/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ <HintPath>D:/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.PlaymodeTestsRunner">
- <HintPath>D:/Programmes/Unity/Editor/Data/UnityExtensions/Unity/PlaymodeTestsRunner/UnityEngine.PlaymodeTestsRunner.dll</HintPath>
+ <HintPath>D:/Unity/Editor/Data/UnityExtensions/Unity/PlaymodeTestsRunner/UnityEngine.PlaymodeTestsRunner.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Analytics">
- <HintPath>D:/Programmes/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
+ <HintPath>D:/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.HoloLens">
- <HintPath>D:/Programmes/Unity/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
+ <HintPath>D:/Unity/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.VR">
- <HintPath>D:/Programmes/Unity/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>
+ <HintPath>D:/Unity/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

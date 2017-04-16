@@ -109,38 +109,17 @@ namespace WarBotEngine.Editeur
             team_selector.DeployOrTuck += OnDeployOrTuck;
             unit_selector.SelectItem += OnSelectItem;
 
+            XMLInterpreter interpreter = new XMLInterpreter();
+
             // A SUPPRIMER
-            team_selector.Elements = new string[]
-            {
-                "Equipe 1",
-                "Equipe 2",
-                "Equipe 3",
-                "Equipe 4",
-                "Equipe 5",
-                "Equipe 6",
-                "Equipe 7",
-                "Equipe 8",
-                "Equipe 9",
-                "Equipe 10",
-                "Equipe 11",
-                "Equipe 12",
-                "Equipe 13"
-            };
+            team_selector.Elements = interpreter.allTeamsInXmlFiles(Constants.teamsDirectory).ToArray();
             unit_selector.Elements = new string[]
             {
-                "Unité 1",
-                "Unité 2",
-                "Unité 3",
-                "Unité 4",
-                "Unité 5",
-                "Unité 6",
-                "Unité 7",
-                "Unité 8",
-                "Unité 9",
-                "Unité 10",
-                "Unité 11",
-                "Unité 12",
-                "Unité 13"
+                "base",
+                "explorer",
+                "turret",
+                "ingeneer",
+                "fighter"
             };
         }
 
@@ -155,12 +134,13 @@ namespace WarBotEngine.Editeur
             if (widget.ID == this.team_selector.ID)
             {
                 //Sélection de l'équipe
-                
+                mainLayout.Editor = new BehaviorEditor(this.team_selector.Selection, this.Unit_selector.Selection);
             }
             else
             {
                 //Sélection de l'unité
 				mainLayout.Primitives_collection = new PrimitivesCollection (this.Unit_selector.Selection);
+                mainLayout.Editor = new BehaviorEditor(this.team_selector.Selection, this.Unit_selector.Selection);
             }
         }
 

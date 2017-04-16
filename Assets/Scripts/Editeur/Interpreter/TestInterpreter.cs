@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
-using System.IO;
-using Assets.Scripts.Editeur.Interpreter;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using WarBotEngine.Editeur;
@@ -17,13 +11,12 @@ namespace Assets.Scripts.Editeur.Interpreter
         void Start()
         {
             
-            string teamName = "LoShenCompany";
-            string path = "./";
-            string unitName = "base";
+            string teamName = "DoudouLaMalice";
+            string unitName = "zouave";
             XMLInterpreter interpreter = new XMLInterpreter();
             
             List<Instruction> behavior = new List<Instruction>();
-            /** Ecriture d'un fichier xml
+            /** Ecriture d'un fichier xml **
             Condition bag = new IsBagEmpty();
             Action idle = new Idle();
             Action shoot = new Shoot();
@@ -37,15 +30,17 @@ namespace Assets.Scripts.Editeur.Interpreter
             behavior.Add(when);
             behavior.Add(idle);
 
-            interpreter.behaviorToXml(teamName, path, unitName, behavior);
+            interpreter.behaviorToXml(teamName, Constants.teamsDirectory, unitName, behavior);
             Debug.Log("fini");
             */
-            behavior = interpreter.xmlToUnitBehavior(teamName, path, unitName);
+            /**/
+            behavior = interpreter.xmlToUnitBehavior(teamName, Constants.teamsDirectory, unitName);
             Debug.Log(behavior.Count);
             foreach(Instruction i in behavior)
             {
                 Debug.Log(i.xmlStructure().OuterXml);
             }
+           /* */
         }
 
         void Update()

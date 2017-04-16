@@ -101,7 +101,18 @@ namespace WarBotEngine.Editeur
         /// </summary>
         public Widget UpperContainer { get { return this.upper_container; } }
 
-		public BehaviorEditor Editor{ get { return this.editor; } }
+		public BehaviorEditor Editor{
+            get { return this.editor; }
+            set
+            {
+                this.RemoveWidget(this.editor);
+                this.editor = value;
+                this.AddWidget(this.editor);
+                this.RemoveWidget(this.drag_and_drop);
+                this.drag_and_drop.Editor = this.editor;
+                this.AddWidget(this.drag_and_drop);
+            }
+        }
 
 		public PrimitivesCollection Primitives_collection{ 
 			get { return this.primitivesCollection; } 
@@ -132,9 +143,9 @@ namespace WarBotEngine.Editeur
 			widgets = new List<Widget> ();
             this.upper_container = new Container(new Rect(0, 0, Screen.width, Screen.height));
 
-			this.editor = new BehaviorEditor();
 			this.teamSelection = new TeamSelection(actual);
-			this.primitivesCollection = new PrimitivesCollection(this.teamSelection.Unit_selector.Selection);
+            this.editor = new BehaviorEditor(this.teamSelection.Team_selector.Selection, this.teamSelection.Unit_selector.Selection);
+            this.primitivesCollection = new PrimitivesCollection(this.teamSelection.Unit_selector.Selection);
 			this.AddWidget (editor);
 			this.AddWidget (primitivesCollection);
 			this.AddWidget (teamSelection);
