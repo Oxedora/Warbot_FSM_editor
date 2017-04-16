@@ -91,7 +91,6 @@ namespace WarBotEngine.Editeur
         /// <param name="cursor">position du curseur</param>
         public override void PushPrimitive(Primitive primitive, Vector2 cursor)
         {
-			Debug.Log("Tentative de placer "+primitive.Instruction.ToString());
 			if(this.inner_container && primitive.Instruction is Condition
 				|| !this.inner_container && primitive.Instruction is Action)
             	this.First.PushPrimitive(primitive, cursor);

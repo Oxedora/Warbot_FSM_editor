@@ -1,6 +1,6 @@
 ﻿using System.Xml;
 
-namespace Assets.Scripts.Editeur.Interpreter
+namespace WarBotEngine.Editeur
 {
 	/**
 	 * @Author : Celia Rouquairol

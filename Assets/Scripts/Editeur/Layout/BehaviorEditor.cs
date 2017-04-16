@@ -48,6 +48,11 @@ namespace WarBotEngine.Editeur
         /// </summary>
         public Primitive First { get { return (Primitive)this.childs[0]; } }
 
+        /// <summary>
+        /// Dernier élément de l'éditeur
+        /// </summary>
+        public Primitive Last { get { return (Primitive)this.childs[this.childs.Count-1]; } }
+
 
         /********************************************
          ****** METHODES SPECIFIQUES AU WIDGET ******
@@ -57,9 +62,12 @@ namespace WarBotEngine.Editeur
         /// <summary>
         /// Constructeur de base de l'éditeur
         /// </summary>
-        public BehaviorEditor() : base(new Rect(Screen.width * TeamSelection.DIM_WIDTH, 0, Screen.width * (1 - TeamSelection.DIM_WIDTH), Screen.height))
+        public BehaviorEditor(string teamName, string unitName) : base(new Rect(Screen.width * TeamSelection.DIM_WIDTH, 0, Screen.width * (1 - TeamSelection.DIM_WIDTH), Screen.height))
         {
             BehaviorEditor.actual = this;
+
+            XMLInterpreter interpreter = new XMLInterpreter();
+            List<Instruction> instructions = interpreter.xmlToUnitBehavior(teamName, Constants.teamsDirectory, unitName);
 
             this.AllowScrollbar = true;
             this.AllowMotionScroll = true;
@@ -67,6 +75,12 @@ namespace WarBotEngine.Editeur
 
 			this.AddChild(new Primitive(new Vector2(DIM_MINIMUM_SPACE, 0), Primitive.NAME_PRIMITIVE_BEGIN, null));
             this.First.ExtendHeight += OnExtendHeight;
+
+            for(int i = instructions.Count-1; i > -1; i--)
+            {
+                Primitive p = new Primitive(new Vector2(0, 0), instructions[i].Type(), instructions[i]);
+                this.Last.PushPrimitive(p, this.Last.GlobalPosition);
+            }
         }
 
         /// <summary>
