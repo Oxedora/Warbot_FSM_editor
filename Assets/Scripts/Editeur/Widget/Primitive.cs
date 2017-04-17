@@ -61,12 +61,12 @@ namespace WarBotEngine.Editeur
         /// <summary>
         /// Primitives en entrée
         /// </summary>
-        protected List<PrimitiveContainer> inner = new List<PrimitiveContainer>();
+		protected PrimitiveContainer inner = null;
 
         /// <summary>
         /// Primitives en sortie
         /// </summary>
-        protected List<PrimitiveContainer> outer = new List<PrimitiveContainer>();
+		protected PrimitiveContainer outer = null;
 
         /// <summary>
         /// Primitive suivante
@@ -167,10 +167,10 @@ namespace WarBotEngine.Editeur
             get
             {
                 float res = this.area.width;
-                foreach (PrimitiveContainer tr in inner)
-                    res = Mathf.Max(res, tr.LocalArea.x + tr.First.TotalWidth);
-                foreach (PrimitiveContainer tr in outer)
-                    res = Mathf.Max(res, tr.LocalArea.x + tr.First.TotalWidth);
+				if(this.inner != null)
+					res = Mathf.Max(res, this.inner.LocalArea.x + this.inner.First.TotalWidth);
+				if(this.outer != null)
+					res = Mathf.Max(res, this.outer.LocalArea.x + this.outer.First.TotalWidth);
                 if (this.Next != null)
                     res = Mathf.Max(res, this.Next.TotalWidth);
                 return (int)res;
@@ -179,7 +179,12 @@ namespace WarBotEngine.Editeur
 
 		public Label Title{get{ return title;} set{this.title = value;}}
 
-		public Instruction Instruction{ get{ return this.instruction;} set{ this.instruction = value;}}
+		public Instruction Instruction{ 
+			get{
+				return this.instruction;
+			} 
+			set{ this.instruction = value;}
+		}
 
         /********************************************
          ****** METHODES SPECIFIQUES AU WIDGET ******
@@ -197,53 +202,42 @@ namespace WarBotEngine.Editeur
         /// <param name="position">position de la primitive</param>
         /// <param name="name">nom de la primitive</param>
 		public Primitive(Vector2 position, string name, Instruction instruction)
-        {
+		{
 			this.instruction = instruction;
-            if (name == NAME_PRIMITIVE_BEGIN)
-                this.LocalArea = new Rect(position.x, position.y, DIM_WIDTH, DIM_TITLE_HEIGHT);
-			else if (instruction.GetType().Equals(typeof(When)))
-            {
-                When w = (When)instruction;
+			if (name == NAME_PRIMITIVE_BEGIN)
+				this.LocalArea = new Rect (position.x, position.y, DIM_WIDTH, DIM_TITLE_HEIGHT);
+			else if (instruction.GetType ().Equals (typeof(When))) {
+				When w = (When)instruction;
 
-                this.LocalArea = new Rect(position.x, position.y, DIM_WIDTH, 200);
-                PrimitiveContainer pcInner = (new PrimitiveContainer(new Vector2(this.area.width, 0), "CONDITION", this, true));
+				this.LocalArea = new Rect (position.x, position.y, DIM_WIDTH, 200);
+				this.inner = (new PrimitiveContainer (new Vector2 (this.area.width, 0), "CONDITION", this, true));
+				this.AddChild (this.inner);
+				for (int i = w.getConditions ().Count - 1; i > -1; i--) {
+					Primitive p = new Primitive (new Vector2 (), w.getConditions () [i].Type (), w.getConditions () [i]);
+					this.inner.PushPrimitive (p, this.inner.First.GlobalPosition);
+				}
 
-                for(int i = w.getConditions().Count-1; i > -1; i--)
-                {
-                    Primitive p = new Primitive(new Vector2(), w.getConditions()[i].Type(), w.getConditions()[i]);
-                    pcInner.PushPrimitive(p, pcInner.First.GlobalPosition);
-                }
-                this.inner.Add(pcInner);
+				this.outer = (new PrimitiveContainer (new Vector2 (this.area.width, 0), "ALORS", this, false));
+				this.AddChild (this.outer);
+				for (int i = w.getActions ().Count - 1; i > -1; i--) {
+					Primitive p = new Primitive (new Vector2 (), w.getActions () [i].Type (), w.getActions () [i]);
+					this.outer.PushPrimitive (p, this.outer.First.GlobalPosition);
+				}
 
-                PrimitiveContainer pcOuter = (new PrimitiveContainer(new Vector2(this.area.width, 0), "ALORS", this, false));
-                for (int i = w.getActions().Count - 1; i > -1; i--)
-                {
-                    Primitive p = new Primitive(new Vector2(), w.getActions()[i].Type(), w.getActions()[i]);
-                    pcOuter.PushPrimitive(p, pcOuter.First.GlobalPosition);
-                }
-                this.outer.Add(pcOuter);
-                //this.outer.Add(new PrimitiveContainer(new Vector2(this.area.width, 0), "SINON", this, false));
-            }
-            else {
-                this.LocalArea = new Rect(position.x, position.y, DIM_WIDTH, 100);
-                this.minimum_height = 100;
-            }
 
-            this.title = new Label(new Rect(0, 0, this.area.width, DIM_TITLE_HEIGHT), name);
-            this.title.Color = COLOR_2;
-            this.AddChild(this.title);
+				this.inner.ExtendHeight += this.OnPrimitiveContainerExtend;
+				this.outer.ExtendHeight += this.OnPrimitiveContainerExtend;
+				this.OnPrimitiveContainerExtend(null, null);
 
-            foreach (PrimitiveContainer pr in this.inner)
-            {
-                this.AddChild(pr);
-                pr.ExtendHeight += this.OnPrimitiveContainerExtend;
-            }
-            foreach (PrimitiveContainer pr in this.outer)
-            {
-                this.AddChild(pr);
-                pr.ExtendHeight += this.OnPrimitiveContainerExtend;
-            }
-            this.OnPrimitiveContainerExtend(null, null);
+			} else {
+				this.LocalArea = new Rect (position.x, position.y, DIM_WIDTH, 100);
+				this.minimum_height = 100;
+			}
+
+			this.title = new Label (new Rect (0, 0, this.area.width, DIM_TITLE_HEIGHT), name);
+			this.title.Color = COLOR_2;
+			this.AddChild (this.title);
+
         }
 
         /// <summary>
@@ -251,11 +245,12 @@ namespace WarBotEngine.Editeur
         /// </summary>
         /// <param name="primitive">primitive à placer</param>
         /// <param name="cursor">position du curseur</param>
-        public virtual void PushPrimitive(Primitive primitive, Vector2 cursor)
+		public virtual bool PushPrimitive(Primitive primitive, Vector2 cursor)
         {
             if (this.GlobalArea.Contains(cursor))
             {
                 this.Next = primitive;
+				return true;
             }
             else
             {
@@ -265,6 +260,7 @@ namespace WarBotEngine.Editeur
                         ((Primitive)w).PushPrimitive(primitive, cursor);
                 }
             }
+			return false;
         }
 
         /// <summary>
@@ -287,16 +283,13 @@ namespace WarBotEngine.Editeur
         public virtual void OnPrimitiveContainerExtend(Widget w, object args)
         {
             int y_pos = DIM_TITLE_HEIGHT;
-            foreach (PrimitiveContainer pr in inner)
-            {
-                pr.LocalPosition = new Vector2(this.area.width, y_pos);
-                y_pos += (int)pr.LocalArea.height + pr.InnerHeight;
-            }
-            foreach (PrimitiveContainer pr in outer)
-            {
-                pr.LocalPosition = new Vector2(this.area.width, y_pos);
-                y_pos += (int)pr.LocalArea.height + pr.InnerHeight;
-            }
+            
+            this.inner.LocalPosition = new Vector2(this.area.width, y_pos);
+			y_pos += (int)this.inner.LocalArea.height + this.inner.InnerHeight;
+            
+			this.outer.LocalPosition = new Vector2(this.area.width, y_pos);
+			y_pos += (int)this.outer.LocalArea.height + this.outer.InnerHeight;
+            
             if (y_pos < this.minimum_height)
                 this.LocalArea = new Rect(this.LocalArea.x, this.LocalArea.y, this.LocalArea.width, this.minimum_height);
             else

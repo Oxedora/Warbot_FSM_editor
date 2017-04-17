@@ -101,6 +101,20 @@ namespace WarBotEngine.Editeur
         /// </summary>
         protected override void RefreshDiplaying() {}
 
+		/// <summary>
+		/// Renvoie la liste des instructions affichés dans l'éditeur
+		/// </summary>
+		public List<Instruction> behavior()
+		{
+			List<Instruction> instructions = new List<Instruction> ();
+			Primitive p = this.First;
+			p = p.Next;
+			while (p != null) {
+				instructions.Add (p.Instruction);
+				p = p.Next;
+			}
+			return instructions;
+		}
 
         /*********************************
          ****** METHODES DE GESTION ******

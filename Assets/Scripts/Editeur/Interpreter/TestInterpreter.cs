@@ -12,19 +12,19 @@ namespace Assets.Scripts.Editeur.Interpreter
         {
             
             string teamName = "DoudouLaMalice";
-            string unitName = "zouave";
+            string unitName = "explorer";
             XMLInterpreter interpreter = new XMLInterpreter();
             
             List<Instruction> behavior = new List<Instruction>();
-            /** Ecriture d'un fichier xml **
+            /** Ecriture d'un fichier xml **/
             Condition bag = new IsBagEmpty();
             Action idle = new Idle();
             Action shoot = new Shoot();
-            //Action move = new Move();
+            Action move = new Move();
             When when = new When();
 
             when.addCondition(bag);
-           // when.addAction(move);
+            when.addAction(move);
             when.addAction(shoot);
 
             behavior.Add(when);
@@ -32,8 +32,7 @@ namespace Assets.Scripts.Editeur.Interpreter
 
             interpreter.behaviorToXml(teamName, Constants.teamsDirectory, unitName, behavior);
             Debug.Log("fini");
-            */
-            /**/
+            /*
             behavior = interpreter.xmlToUnitBehavior(teamName, Constants.teamsDirectory, unitName);
             Debug.Log(behavior.Count);
             foreach(Instruction i in behavior)
