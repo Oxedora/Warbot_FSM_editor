@@ -89,11 +89,38 @@ namespace WarBotEngine.Editeur
         /// </summary>
         /// <param name="primitive">primitive à placer</param>
         /// <param name="cursor">position du curseur</param>
-        public override void PushPrimitive(Primitive primitive, Vector2 cursor)
+		public override bool PushPrimitive(Primitive primitive, Vector2 cursor)
         {
-			if(this.inner_container && primitive.Instruction is Condition
-				|| !this.inner_container && primitive.Instruction is Action)
-            	this.First.PushPrimitive(primitive, cursor);
+			if (this.inner_container && primitive.Instruction is Condition)
+			{
+				if (this.First.PushPrimitive (primitive, cursor)) {
+					List<Condition> conditions = new List<Condition> ();
+					Primitive p = this.First.Next;
+					while (p != null) {
+						conditions.Add ((Condition)p.Instruction);
+						p = p.Next;
+					}
+					Debug.Log ("Type de primitive :"+((When)((Primitive)this.parent).Instruction).Type ());
+					((When)((Primitive)this.parent).Instruction).setConditions (conditions);
+					return true;
+				}
+			}
+			else if (!this.inner_container && primitive.Instruction is Action)
+			{
+				if (this.First.PushPrimitive (primitive, cursor)) {
+					List<Action> actions = new List<Action> ();
+					Primitive p = this.First.Next;
+					while (p != null) {
+						actions.Add ((Action)p.Instruction);
+						p = p.Next;
+					}
+					Debug.Log ("Type de primitive :"+((When)((Primitive)this.parent).Instruction).Type ());
+					((When)((Primitive)this.parent).Instruction).setActions (actions);
+					return true;
+				}
+			}
+
+			return false;
         }
 
         /// <summary>

@@ -64,8 +64,15 @@ namespace WarBotEngine.Editeur
         /// </summary>
         private Selector unit_selector;
 
-
+		/// <summary>
+		/// The main layout.
+		/// </summary>
 		private MainLayout mainLayout;
+
+		/// <summary>
+		/// Les boutons pour sauvegarder, ajouter une équipe, modifier son nom ou la supprimer.
+		/// </summary>
+		private Button save, addTeam, modTeam;
 
 		/*********************
 		 ***** ACCESSEURS*****
@@ -109,6 +116,10 @@ namespace WarBotEngine.Editeur
             team_selector.DeployOrTuck += OnDeployOrTuck;
             unit_selector.SelectItem += OnSelectItem;
 
+			save = new Button (new Rect (this.LocalArea.xMin + 1, this.LocalArea.yMin + 1, DIM_SELECTOR_WIDTH * this.area.width, DIM_SELECTOR_HEIGHT), "save");
+			this.AddChild (save);
+			save.Clic += Save_Clic;
+
             XMLInterpreter interpreter = new XMLInterpreter();
 
             // A SUPPRIMER
@@ -122,6 +133,13 @@ namespace WarBotEngine.Editeur
                 "fighter"
             };
         }
+
+		void Save_Clic (Widget widget, int button, int x, int y)
+		{
+			XMLInterpreter interpreter = new XMLInterpreter ();
+			List<Instruction> instructions = this.mainLayout.Editor.behavior ();
+			interpreter.behaviorToXml (this.team_selector.Selection, Constants.teamsDirectory, this.unit_selector.Selection, instructions);
+		}
 
         /// <summary>
         /// Appelé lorsque qu'un élément est sélectionné dans un sélecteur
@@ -143,6 +161,11 @@ namespace WarBotEngine.Editeur
                 mainLayout.Editor = new BehaviorEditor(this.team_selector.Selection, this.Unit_selector.Selection);
             }
         }
+
+		void SaveButton(Widget widget, object args)
+		{
+			
+		}
 
         /// <summary>
         /// Appelé lorsque qu'un sélecteur est déployé

@@ -38,20 +38,21 @@ namespace WarBotEngine.Editeur
         {
             switch (ins.Name)
             {
-                case "When":
-                    List<Condition> conditions = new List<Condition>();
-                    XmlNode cond = ins.FirstChild;
-                    foreach (XmlNode c in cond)
-                    {
-                        conditions.Add((Condition)whichInstruction(c));
-                    }
-
-                    List<Action> actions = new List<Action>();
-                    XmlNode act = ins.LastChild;
-                    foreach (XmlNode a in act)
-                    {
-                        actions.Add((Action)whichInstruction(a));
-                    }
+			case "When":
+					List<Condition> conditions = new List<Condition> ();
+					XmlNode cond = ins.FirstChild;
+					if (cond != null) {
+						foreach (XmlNode c in cond) {
+							conditions.Add ((Condition)whichInstruction (c));
+						}
+					}
+					List<Action> actions = new List<Action> ();
+					XmlNode act = ins.LastChild;
+					if (act != null) { 
+						foreach (XmlNode a in act) {
+							actions.Add ((Action)whichInstruction (a));
+						}
+					}
 
                     return new When(conditions, actions);
                 case "Move":

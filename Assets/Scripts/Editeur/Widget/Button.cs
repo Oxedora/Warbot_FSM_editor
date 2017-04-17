@@ -27,24 +27,24 @@ namespace WarBotEngine.Editeur
         /// <summary>
         /// Appelé lors de la sélection du item
         /// </summary>
-        public event Widget.EventDelegate behavior = null;
+//        public event Widget.EventDelegate behavior = null;
 
         /// <summary>
         /// Constructeur du bouton
         /// </summary>
         /// <param name="r">Dimension du bouton</param>
         /// <param name="s">Label à afficher</param>
-        public Button(Rect r, string s, EventMouseDelegate e)
+        public Button(Rect r, string s)
         {
             this.LocalArea = r;
             Rect rectLabel = new Rect(r);
             this.label = new Label(rectLabel, s);
-            this.label.Clic += OnClic;
+			this.AddChild (this.label);
         }
 
-        public void OnClic(Widget widget, int button, int x, int y)
-        {
-
-        }
+//        public void OnClic(Widget widget, int button, int x, int y)
+//        {
+//			if (this.parent != null) {
+//        }
     }
 }
